@@ -6,6 +6,10 @@
 
 #include <string>
 #include <iostream>
+#include <functional>
+
+#include "Renderer.h"
+#include "Input.h"
 
 const unsigned int width = 800, height = 600;
 const std::string window_name = "LearnOpenGL";
@@ -28,39 +32,9 @@ std::string fragment_shader_source =
 "}\n"
 ;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-
 int main()
 {
-	// 初始化GLFW
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// 创建GLFW窗口
-	GLFWwindow* window = glfwCreateWindow(width, height, window_name.c_str(), NULL, NULL);
-	if (window == NULL)
-	{
-		std::cout << "创建GLFW窗口失败" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
-
-	// 初始化GLAD
-	if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == false)
-	{
-		std::cout << "初始化GLAD失败" << std::endl;
-		return -1;
-	}
-
-	// 设置视口
-	glViewport(0, 0, width, height);
-
-	// 注册窗口大小更改时的回调函数
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	Renderer renderer(width, height, window_name);
 
 	// 图形初始化
 	float vertices[] =
@@ -125,7 +99,6 @@ int main()
 	// 解除VAO绑定
 	glBindVertexArray(0);
 
-
 	// 创建着色器
 	unsigned int vertex_shader;
 	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -151,14 +124,14 @@ int main()
 	if (!success)
 	{
 		glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
-		std::cout << "【编译错误】顶点着色器编译失败\n" << infoLog << std::endl;
+		std::cout << infoLog << std::endl;
 	}
 
 	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
-		std::cout << "【编译错误】片段着色器编译失败\n" << infoLog << std::endl;
+		std::cout << infoLog << std::endl;
 	}
 
 	// 创建着色器程序
@@ -179,17 +152,20 @@ int main()
 	if (!success)
 	{
 		glGetProgramInfoLog(shader_program, 512, NULL, infoLog);
-		std::cout << "【链接错误】着色器程序链接失败\n" << infoLog << std::endl;
+		std::cout << infoLog << std::endl;
 	}
 
 	// 设置绘制模式
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	while (glfwWindowShouldClose(window) == false)
+	std::function<void()> draw_statements = [&]()
 	{
-		processInput(window);
+		if (renderer.GetKeyDown(Key::Escape))
+		{
+			std::cout << "按下了退出键，循环结束" << std::endl;
+			renderer.Quit();
+		}
 
-		// 渲染指令
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -198,33 +174,15 @@ int main()
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+	};
 
-		// 检查并调用事件，交换缓冲
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
+	renderer.SetUpdateCallback(draw_statements);
+	renderer.Run();
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &IBO);
 	glDeleteProgram(shader_program);
 
-	// 释放资源
-	glfwTerminate();
-
 	return 0;
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
-		std::cout << "按下了退出键，循环结束" << std::endl;
-		glfwSetWindowShouldClose(window, true);
-	}
 }
