@@ -13,6 +13,9 @@ Renderer::Renderer(unsigned int width, unsigned int height, std::string windowNa
 
 Renderer::~Renderer()
 {
+	// 渲染器析构操作
+	
+	// 窗口成员对象应最后析构
 }
 
 void Renderer::InitGLAD()
@@ -25,16 +28,15 @@ void Renderer::InitGLAD()
 
 void Renderer::Run()
 {
-	while (glfwWindowShouldClose(m_window.GetWindow()) == false)
+	while (glfwWindowShouldClose(m_window.GetWindowPointer()) == false)
 	{
 		// 每次迭代回调的函数
 		m_updateCallback();
 
-		glfwSwapBuffers(m_window.GetWindow());
+		glfwSwapBuffers(m_window.GetWindowPointer());
 		glfwPollEvents();
-		// glfwSwapBuffers函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色值的大缓冲），
-		// 它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上。
+		// glfwSwapBuffers函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色值的大缓冲）
 		// glfwPollEvents函数检查有没有触发什么事件（比如键盘输入、鼠标移动等）、更新窗口状态，
-		// 并调用对应的回调函数（可以通过回调方法手动设置）。
+		// 并调用对应的回调函数（可以通过回调方法手动设置）
 	}
 }

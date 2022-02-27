@@ -13,12 +13,13 @@ public:
 	~Window();
 
 private:
+	// GLFW负责创建窗口，管理输入
 	void InitGLFW();
 	void CreateWindow(unsigned int width, unsigned int height, const std::string& name);
 	void SetupCallback();
 
 public:
-	GLFWwindow* GetWindow() { return m_window; }
+	GLFWwindow* GetWindowPointer() { return m_window; }
 
 private:
 	GLFWwindow* m_window;
