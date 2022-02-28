@@ -1,4 +1,8 @@
 #pragma once
+
+/// <summary>
+/// ¶¥µã»º³å
+/// </summary>
 class VertexBuffer
 {
 public:

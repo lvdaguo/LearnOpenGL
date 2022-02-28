@@ -26,16 +26,21 @@ private:
 	void InitGLAD();
 
 public:
+	/// <summary>
+	/// 设置每帧执行的回调函数
+	/// </summary>
+	/// <param name="func"> 回调函数 </param>
 	void SetUpdateCallback(std::function<void()> func) { m_updateCallback = func; }
+
 	void Run();
-	void Quit() { glfwSetWindowShouldClose(m_window.GetWindowPointer(), true); }
+	void Quit() const { glfwSetWindowShouldClose(m_window.GetWindowPointer(), true); }
 
 	void SetClearColor(float r, float g, float b, float a) { glClearColor(r, g, b, a); }
 	void ClearScreen() { glClear(GL_COLOR_BUFFER_BIT); }
 
 	void Draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const Shader& shader);
 
-	bool GetKeyDown(Key key)
+	bool GetKeyDown(Key key) const
 	{
 		return glfwGetKey(m_window.GetWindowPointer(), static_cast<int>(key)) == GLFW_PRESS;
 	}

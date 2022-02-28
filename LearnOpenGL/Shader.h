@@ -23,7 +23,12 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
+private:
+	int GetUniformLocation(const std::string& name);
+
+public:
 	void SetUniform4f(const std::string& name, float x, float y, float z, float w);
+	void SetUniform1i(const std::string& name, int i);
 
 private:
 	unsigned int m_shaderProgramID;

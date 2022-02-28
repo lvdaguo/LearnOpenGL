@@ -4,12 +4,18 @@
 #include <vector>
 #include <iostream>
 
+/// <summary>
+/// 顶点缓冲布局元素
+/// </summary>
 struct VertexBufferLayoutElement
 {
 	GLuint type;
 	GLuint count;
 	unsigned char normalized;
 
+	/// <summary>
+	/// 获取类型所占的空间
+	/// </summary>
 	static unsigned int GetSizeOfType(GLuint type)
 	{
 		switch (type)
@@ -26,6 +32,9 @@ struct VertexBufferLayoutElement
 	}
 };
 
+/// <summary>
+/// 顶点缓冲布局
+/// </summary>
 class VertexBufferLayout
 {
 public:

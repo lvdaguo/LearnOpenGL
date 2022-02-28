@@ -3,6 +3,9 @@
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
 
+/// <summary>
+/// ถฅตใสýื้
+/// </summary>
 class VertexArray
 {
 public:

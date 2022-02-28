@@ -1,5 +1,8 @@
 #pragma once
 
+/// <summary>
+/// 顶点缓冲
+/// </summary>
 class IndexBuffer
 {
 public:
@@ -9,7 +12,10 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
-	unsigned int GetCount() const { return m_count; }
+	/// <summary>
+	/// 获取缓冲个数
+	/// </summary>
+	unsigned unsigned int GetCount() const { return m_count; }
 
 private:
 	unsigned int m_bufferID;
