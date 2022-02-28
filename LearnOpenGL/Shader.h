@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 /// <summary>
 /// ×ÅÉ«Æ÷
@@ -19,10 +20,13 @@ private:
 	void CheckShaderProgram(unsigned int shaderProgramID);
 
 public:
-	void Bind();
-	void Unbind();
+	void Bind() const;
+	void Unbind() const;
+
+	void SetUniform4f(const std::string& name, float x, float y, float z, float w);
 
 private:
 	unsigned int m_shaderProgramID;
+	std::unordered_map<std::string, int> m_locationMap;
 };
 

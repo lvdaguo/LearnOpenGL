@@ -19,7 +19,7 @@ private:
 	void SetupCallback();
 
 public:
-	GLFWwindow* GetWindowPointer() { return m_window; }
+	GLFWwindow* GetWindowPointer() const { return m_window; }
 
 private:
 	GLFWwindow* m_window;

@@ -40,3 +40,11 @@ void Renderer::Run()
 		// 并调用对应的回调函数（可以通过回调方法手动设置）
 	}
 }
+
+void Renderer::Draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const Shader& shader)
+{
+	vertexArray.Bind();
+	indexBuffer.Bind();
+	shader.Bind();
+	glDrawElements(GL_TRIANGLES, indexBuffer.GetCount(), GL_UNSIGNED_INT, NULL);
+}

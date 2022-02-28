@@ -106,12 +106,25 @@ void Shader::CheckShaderProgram(unsigned int shaderProgramID)
 	}
 };
 
-void Shader::Bind()
+void Shader::Bind() const
 {
 	glUseProgram(m_shaderProgramID);
 }
 
-void Shader::Unbind()
+void Shader::Unbind() const
 {
 	glUseProgram(0);
+}
+
+void Shader::SetUniform4f(const std::string& name, float x, float y, float z, float w)
+{
+	auto it = m_locationMap.find(name);
+	int location = -1;
+	if (it == m_locationMap.end())
+	{
+		location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+	}
+	location = it->second;
+
+	glUniform4f(m_shaderProgramID, x, y, z, w);
 }

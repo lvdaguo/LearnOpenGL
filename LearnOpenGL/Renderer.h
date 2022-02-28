@@ -1,10 +1,13 @@
 #pragma once
 
-#include "Window.h"
-#include "Input.h"
 #include <GLFW/glfw3.h>
 #include <string>
 #include <functional>
+#include "Input.h"
+#include "Window.h"
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
 
 /// <summary>
 /// äÖÈ¾Æ÷
@@ -26,6 +29,11 @@ public:
 	void SetUpdateCallback(std::function<void()> func) { m_updateCallback = func; }
 	void Run();
 	void Quit() { glfwSetWindowShouldClose(m_window.GetWindowPointer(), true); }
+
+	void SetClearColor(float r, float g, float b, float a) { glClearColor(r, g, b, a); }
+	void ClearScreen() { glClear(GL_COLOR_BUFFER_BIT); }
+
+	void Draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const Shader& shader);
 
 	bool GetKeyDown(Key key)
 	{
