@@ -1,8 +1,9 @@
 #include <glad/glad.h>
-#include "Shader.h"
+#include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "Shader.h"
 
 Shader::Shader(const std::string& vertexShaderPath, const std::string fragmentShaderPath)
 {
@@ -140,4 +141,14 @@ void Shader::SetUniform4f(const std::string& name, float x, float y, float z, fl
 void Shader::SetUniform1i(const std::string& name, int i)
 {
 	glUniform1i(GetUniformLocation(name), i);
+}
+
+void Shader::SetUniformVec4(const std::string& name, const glm::vec4& vec)
+{
+	glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vec));
+}
+
+void Shader::SetUniformMat4(const std::string& name, const glm::mat4& mat)
+{
+	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat));
 }

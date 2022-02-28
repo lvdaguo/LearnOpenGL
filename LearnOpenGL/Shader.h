@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <glm/glm.hpp>
 
 /// <summary>
 /// ×ÅÉ«Æ÷
@@ -29,6 +30,9 @@ private:
 public:
 	void SetUniform4f(const std::string& name, float x, float y, float z, float w);
 	void SetUniform1i(const std::string& name, int i);
+
+	void SetUniformVec4(const std::string& name, const glm::vec4& vec);
+	void SetUniformMat4(const std::string& name, const glm::mat4& mat);
 
 private:
 	unsigned int m_shaderProgramID;

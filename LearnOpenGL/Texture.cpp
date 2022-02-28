@@ -6,32 +6,8 @@
 Texture::Texture(const std::string& filePath)
 {
 	CreateTexture();
-	
 	stbi_set_flip_vertically_on_load(true);
-	int nrChannels;
-	unsigned char* data = stbi_load(filePath.c_str(), &m_width, &m_height, &nrChannels, 0);
-	if (data != nullptr)
-	{
-		std::string extension = GetFileExtension(filePath);
-		if (extension == "png")
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
-		else if (extension == "jpg")
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		}
-		else
-		{
-			std::cout << "未定义的文件拓展名:" << std::endl << extension << std::endl;
-		}
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "加载纹理失败，路径为" << filePath << std::endl;
-	}
-	stbi_image_free(data); // 释放空间
+	LoadTextureFromPicture(filePath);
 }
 
 Texture::~Texture()
@@ -43,7 +19,6 @@ void Texture::CreateTexture()
 {
 	glGenTextures(1, &m_textureID);
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
-	//this->Bind(0);
 
 	// 为当前绑定的纹理对象设置环绕、过滤方式
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -52,40 +27,28 @@ void Texture::CreateTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-void Texture::LoadTextureFromPicture(unsigned char* data, const std::string& filePath)
+void Texture::LoadTextureFromPicture(const std::string& filePath)
 {
-	if (data != nullptr)
-	{
-		std::string extension = GetFileExtension(filePath);
-		if (extension == "png")
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
-		else if (extension == "jpg")
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		}
-		else
-		{
-			std::cout << "未定义的文件拓展名:" << std::endl << extension << std::endl;
-		}
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
+	int nrChannels;
+	unsigned char* data = stbi_load(filePath.c_str(), &m_width, &m_height, &nrChannels, 0);
+	if (data == nullptr)
 	{
 		std::cout << "加载纹理失败，路径为" << filePath << std::endl;
+		stbi_image_free(data);
+		return;
 	}
-}
+	
+	std::string extension = GetFileExtension(filePath);
 
-void Texture::Bind(unsigned int slot /*= 0*/) const
-{
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, m_textureID);
-}
+	GLenum channelType = 0;
+	if      (extension == "png")	channelType = GL_RGBA;
+	else if (extension == "jpg")    channelType = GL_RGB;
+	else std::cout << "未定义的文件拓展名:\n" << extension << std::endl;
 
-void Texture::Unbind() const
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, channelType, m_width, m_height, 0, channelType, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(data); // 释放空间
 }
 
 std::string Texture::GetFileExtension(const std::string& filePath) const
@@ -102,4 +65,15 @@ std::string Texture::GetFileExtension(const std::string& filePath) const
 	}
 	std::cout << filePath << "该文件路径找不到拓展名" << std::endl;
 	return "";
+}
+
+void Texture::Bind(unsigned int slot /*= 0*/) const
+{
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(GL_TEXTURE_2D, m_textureID);
+}
+
+void Texture::Unbind() const
+{
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

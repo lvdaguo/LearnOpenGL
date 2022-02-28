@@ -36,7 +36,7 @@ public:
 	void Quit() const { glfwSetWindowShouldClose(m_window.GetWindowPointer(), true); }
 
 	void SetClearColor(float r, float g, float b, float a) { glClearColor(r, g, b, a); }
-	void ClearScreen() { glClear(GL_COLOR_BUFFER_BIT); }
+	void Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
 	void Draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const Shader& shader);
 
