@@ -15,6 +15,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Texture.h"
+#include "Camera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -112,7 +113,7 @@ int main()
 	Texture texture1("Assets/Textures/container.jpg");
 	Texture texture2("Assets/Textures/awesomeface.png");
 
-	shader.Bind();
+	shader.Use();
 	shader.SetUniform1i("texture1", 0);
 	shader.SetUniform1i("texture2", 1);
 
@@ -132,41 +133,45 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	std::function<void()> draw_statements = [&]()
+	glm::vec3 camPos = glm::vec3(0.0f, 0.0, 3.0f);
+
+	Camera cam(camPos, glm::vec3(0.0f, 1.0f, 0.0f), renderer.GetAspect());
+
+	renderer.SetUpdateCallback([&](float deltaTime)
 	{
+		cam.ReceiveInput(renderer.GetInputModule());
 		ProcessInput(renderer);
+		/*glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));*/
 
+		glm::mat4 view = cam.GetViewMatrix();
+		glm::mat4 proj = cam.GetProjectionMatrix();
 
-
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-		glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+		//glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 
 		texture1.Bind(0);
 		texture2.Bind(1);
 
 		renderer.Clear();
-		
+
 		for (unsigned int i = 0; i < 10; ++i)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.0f));
-		
-			shader.Bind();
+
+			shader.Use();
 			shader.SetUniformMat4("model", model);
 			shader.SetUniformMat4("view", view);
 			shader.SetUniformMat4("projection", proj);
-		
+
 			renderer.Draw(vao, ibo, shader);
 		}
 
 		//renderer.Draw(vao, ibo, shader);
-	};
+	});
 
-	renderer.SetUpdateCallback(draw_statements);
 	renderer.Run();
 
 	return 0;
@@ -174,7 +179,7 @@ int main()
 
 void ProcessInput(const Renderer& renderer)
 {
-	if (renderer.GetKeyDown(Key::Escape))
+	if (renderer.GetInputModule().GetKeyDown(Key::Escape))
 	{
 		std::cout << "按下了退出键，循环结束" << std::endl;
 		renderer.Quit();

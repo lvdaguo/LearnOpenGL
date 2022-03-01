@@ -107,14 +107,9 @@ void Shader::CheckShaderProgram(unsigned int shaderProgramID)
 	}
 };
 
-void Shader::Bind() const
+void Shader::Use() const
 {
 	glUseProgram(m_shaderProgramID);
-}
-
-void Shader::Unbind() const
-{
-	glUseProgram(0);
 }
 
 int Shader::GetUniformLocation(const std::string& name)

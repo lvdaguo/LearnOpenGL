@@ -1,4 +1,6 @@
 #include "VertexArray.h"
+#include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
 
 VertexArray::VertexArray()
 {
@@ -28,9 +30,4 @@ void VertexArray::AddLayout(const VertexBuffer& vertexBuffer, const VertexBuffer
 void VertexArray::Bind() const
 {
 	glBindVertexArray(m_vertexArrayID);
-}
-
-void VertexArray::Unbind() const
-{
-	glBindVertexArray(0);
 }

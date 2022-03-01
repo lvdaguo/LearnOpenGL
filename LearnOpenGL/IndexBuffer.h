@@ -10,12 +10,11 @@ public:
 	~IndexBuffer();
 
 	void Bind() const;
-	void Unbind() const;
 
 	/// <summary>
 	/// 获取缓冲个数
 	/// </summary>
-	unsigned unsigned int GetCount() const { return m_count; }
+	unsigned int GetCount() const { return m_count; }
 
 private:
 	unsigned int m_bufferID;

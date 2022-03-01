@@ -21,8 +21,7 @@ private:
 	void CheckShaderProgram(unsigned int shaderProgramID);
 
 public:
-	void Bind() const;
-	void Unbind() const;
+	void Use() const;
 
 private:
 	int GetUniformLocation(const std::string& name);

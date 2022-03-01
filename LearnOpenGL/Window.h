@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <string>
+#include "Input.h"
 
 /// <summary>
 /// ´°¿Ú
@@ -19,9 +20,13 @@ private:
 	void SetupCallback();
 
 public:
-	GLFWwindow* GetWindowPointer() const { return m_window; }
+	GLFWwindow* GetWindowPointer() const { return m_windowPointer; }
+
+	unsigned int GetWidth() const { return m_width; }
+	unsigned int GetHeight() const { return m_height; }
 
 private:
-	GLFWwindow* m_window;
+	GLFWwindow* m_windowPointer;
+	unsigned int m_width, m_height;
 };
 

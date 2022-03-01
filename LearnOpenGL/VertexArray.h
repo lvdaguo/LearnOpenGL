@@ -1,8 +1,5 @@
 #pragma once
 
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-
 /// <summary>
 /// ¶¥µãÊý×é
 /// </summary>
@@ -12,10 +9,9 @@ public:
 	VertexArray();
 	~VertexArray();
 
-	void AddLayout(const VertexBuffer& vertexBuffer, const VertexBufferLayout& vertexBufferLayout);
+	void AddLayout(const class VertexBuffer& vertexBuffer, const class VertexBufferLayout& vertexBufferLayout);
 
 	void Bind() const;
-	void Unbind() const;
 
 private:
 	unsigned int m_vertexArrayID;

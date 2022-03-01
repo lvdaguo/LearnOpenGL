@@ -23,14 +23,14 @@ void Window::InitGLFW()
 
 void Window::CreateWindow(unsigned int width, unsigned int height, const std::string& name)
 {
-	m_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
-	if (m_window == NULL)
+	m_windowPointer = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
+	if (m_windowPointer == NULL)
 	{
 		std::cout << "´´½¨GLFW´°¿ÚÊ§°Ü" << std::endl;
 		glfwTerminate();
 		return;
 	}
-	glfwMakeContextCurrent(m_window);
+	glfwMakeContextCurrent(m_windowPointer);
 
 	SetupCallback();
 
@@ -38,7 +38,7 @@ void Window::CreateWindow(unsigned int width, unsigned int height, const std::st
 
 void Window::SetupCallback()
 {
-	glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow*, int width, int height)
+	glfwSetFramebufferSizeCallback(m_windowPointer, [](GLFWwindow*, int width, int height)
 	{
 		glViewport(0, 0, width, height);
 	});
