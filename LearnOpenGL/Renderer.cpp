@@ -14,6 +14,7 @@ Renderer::Renderer(unsigned int width, unsigned int height, std::string windowNa
 	m_width(width), m_height(height)
 {
 	InitGLAD();
+	glEnable(GL_DEPTH_TEST);
 }
 
 Renderer::~Renderer()
@@ -46,7 +47,7 @@ void Renderer::Run()
 		}
 
 		// 设置可以全局获取的时间差
-		Helper::m_deltaTime = deltaTime;
+		Helper::SetDeltaTime(deltaTime);
 
 		//std::cout << "第" << i << "帧：时间间隔为" << m_deltaTime * 1000.0
 		//	<< "ms，帧数为" << int(1/m_deltaTime) << std::endl;

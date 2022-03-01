@@ -18,6 +18,7 @@ public:
 	glm::mat4 GetProjectionMatrix() const;
 	glm::mat4 GetViewProjectionMatrix() const;
 
+	void SetInputCallback(const class InputModule& inputModule);
 	void ReceiveInput(const class InputModule& inputModule);
 
 private:
@@ -33,8 +34,8 @@ private:
 	float m_mouseSensitivity;
 
 	void SetMovement(const InputModule& inputModule);
-	void SetDirection(const InputModule& inputModule);
-	void SetZoom(const InputModule& inputModule);
+	void SetDirection(float xOffset, float yOffset);
+	void SetZoom(float xOffset, float yOffset);
 	void UpdateFacing();
 };
 

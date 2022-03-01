@@ -2,9 +2,9 @@
 #include "Window.h"
 
 glm::vec2 InputModule::m_mousePosition = glm::vec2();
-glm::vec2 InputModule::m_mouseOffset = glm::vec2();
-glm::vec2 InputModule::m_mouseScroll = glm::vec2();
 glm::vec2 InputModule::m_screenCenter = glm::vec2();
+std::vector<std::function<void(float, float)>> InputModule::m_mouseOffsetCallback = { };
+std::vector<std::function<void(float, float)>> InputModule::m_mouseScrollCallback = { };
 
 InputModule::InputModule(const Window& window) : 
 	m_windowPointer(window.GetWindowPointer())
@@ -37,11 +37,13 @@ void InputModule::MouseCallback(GLFWwindow* window, double x, double y)
 	float xOffset = m_mousePosition.x - mousePositionBefore.x;
 	float yOffset = mousePositionBefore.y - m_mousePosition.y;
 
-	m_mouseOffset = glm::vec2(xOffset, yOffset);
+	for (auto callback : m_mouseOffsetCallback) callback(xOffset, yOffset);
 	mousePositionBefore = m_mousePosition;
 }
 
 void InputModule::ScrollCallback(GLFWwindow* window, double x, double y)
 {
-	m_mouseScroll = glm::vec2(static_cast<float>(x), static_cast<float>(y));
+	float xOffset = static_cast<float>(x);
+	float yOffset = static_cast<float>(y);
+	for (auto callback : m_mouseScrollCallback) callback(xOffset, yOffset);
 }

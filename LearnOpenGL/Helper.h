@@ -11,6 +11,7 @@ class Helper
 {
 private:
 	static float m_deltaTime;
+	static void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
 
 public:
 	static float GetRealTime() { return static_cast<float>(glfwGetTime()); }

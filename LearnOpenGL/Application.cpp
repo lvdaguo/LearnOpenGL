@@ -16,6 +16,7 @@
 #include "VertexArray.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Helper.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -118,7 +119,6 @@ int main()
 	shader.SetUniform1i("texture2", 1);
 
 	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
@@ -136,23 +136,22 @@ int main()
 	glm::vec3 camPos = glm::vec3(0.0f, 0.0, 3.0f);
 
 	Camera cam(camPos, glm::vec3(0.0f, 1.0f, 0.0f), renderer.GetAspect());
+	cam.SetInputCallback(renderer.GetInputModule());
 
 	renderer.SetUpdateCallback([&](float deltaTime)
 	{
 		cam.ReceiveInput(renderer.GetInputModule());
 		ProcessInput(renderer);
-		/*glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));*/
 
 		glm::mat4 view = cam.GetViewMatrix();
 		glm::mat4 proj = cam.GetProjectionMatrix();
-
-		//glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 
 		texture1.Bind(0);
 		texture2.Bind(1);
 
 		renderer.Clear();
+
+		std::cout << Helper::GetDeltaTime() << std::endl;
 
 		for (unsigned int i = 0; i < 10; ++i)
 		{
@@ -168,8 +167,6 @@ int main()
 
 			renderer.Draw(vao, ibo, shader);
 		}
-
-		//renderer.Draw(vao, ibo, shader);
 	});
 
 	renderer.Run();

@@ -32,12 +32,21 @@ glm::mat4 Camera::GetViewProjectionMatrix() const
 	return GetProjectionMatrix() * GetViewMatrix();
 }
 
+void Camera::SetInputCallback(const InputModule& inputModule)
+{
+	inputModule.AddMouseOffsetCallback([this](float xOffset, float yOffset)
+	{
+		SetDirection(xOffset, yOffset);
+	});
+	inputModule.AddMouseScrollCallback([this](float xOffset, float yOffset)
+	{
+		SetZoom(xOffset, yOffset);
+	});
+}
+
 void Camera::ReceiveInput(const InputModule& inputModule)
 {
 	SetMovement(inputModule);
-	SetDirection(inputModule);
-	UpdateFacing();
-	SetZoom(inputModule);
 }
 
 void Camera::SetMovement(const InputModule& inputModule)
@@ -56,17 +65,17 @@ void Camera::SetMovement(const InputModule& inputModule)
 	m_position += dir.x * m_right * velocity;
 }
 
-void Camera::SetDirection(const InputModule& inputModule)
+void Camera::SetDirection(float xOffset, float yOffset)
 {
-	glm::vec2 offset = inputModule.GetMouseOffset();
-	m_yaw += offset.x * m_mouseSensitivity * Helper::GetDeltaTime();
-	m_pitch += offset.y * m_mouseSensitivity * Helper::GetDeltaTime();
+	m_yaw += xOffset * m_mouseSensitivity * Helper::GetDeltaTime();
+	m_pitch += yOffset * m_mouseSensitivity * Helper::GetDeltaTime();
 	m_pitch = glm::clamp(m_pitch, MinPitch, MaxPitch);
+	UpdateFacing();
 }
 
-void Camera::SetZoom(const InputModule& inputModule)
+void Camera::SetZoom(float xOffset, float yOffset)
 {
-	float scrollY = inputModule.GetMouseScroll().y * Helper::GetDeltaTime();
+	float scrollY = yOffset * Helper::GetDeltaTime();
 	m_fov = glm::clamp(m_fov - scrollY, MinFov, MaxFov);
 }
 
