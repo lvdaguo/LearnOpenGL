@@ -10,7 +10,7 @@ class Camera
 {
 public:
 	Camera(const glm::vec3& position, const glm::vec3& up,
-		float moveSpeed = 0.1f, float mouseSensitivity = 0.1f, float fov = 45.0f,
+		float moveSpeed = 0.01f, float mouseSensitivity = 0.1f, float fov = 45.0f,
 		float near = 0.1f, float far = 50.0f);
 	~Camera();
 

@@ -111,5 +111,6 @@
   <ItemGroup>
     <None Include="Assets\Shaders\VertexShader.glsl" />
     <None Include="Assets\Shaders\FragmentShader.glsl" />
+    <None Include="Assets\Shaders\LightShader.glsl" />
   </ItemGroup>
 </Project>

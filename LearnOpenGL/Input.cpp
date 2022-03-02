@@ -48,5 +48,5 @@ void Input::ScrollCallback(GLFWwindow* window, double x, double y)
 {
 	float xOffset = static_cast<float>(x);
 	float yOffset = static_cast<float>(y);
-	m_mouseOffsetEvent.Invoke(xOffset, yOffset);
+	m_mouseScrollEvent.Invoke(xOffset, yOffset);
 }

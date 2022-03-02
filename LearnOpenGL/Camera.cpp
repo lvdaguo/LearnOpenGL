@@ -84,10 +84,13 @@ void Camera::SetDirection(float xOffset, float yOffset)
 	UpdateFacing();
 }
 
+#include <iostream>
+
 void Camera::SetZoom(float xOffset, float yOffset)
 {
 	float scrollY = yOffset * Helper::GetDeltaTime();
 	m_fov = glm::clamp(m_fov - scrollY, MinFov, MaxFov);
+	std::cout << m_fov << std::endl;
 }
 
 void Camera::UpdateFacing()
