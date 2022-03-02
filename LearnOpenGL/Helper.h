@@ -12,12 +12,11 @@ class Helper
 private:
 	static float m_deltaTime;
 	static void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
+	friend void Renderer::Run();
 
 public:
 	static float GetRealTime() { return static_cast<float>(glfwGetTime()); }
 	static float GetDeltaTime() { return m_deltaTime; }
-
-	friend void Renderer::Run();
 
 	static void UnbindVertexBuffer()
 	{

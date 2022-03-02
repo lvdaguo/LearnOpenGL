@@ -2,11 +2,15 @@
 #include <iostream>
 #include <functional>
 
-Window::Window(unsigned int width, unsigned int height, const std::string& name)
+void Window::Init(unsigned int width, unsigned int height, const std::string& name)
 {
+	m_width = width;
+	m_height = height;
 	InitGLFW();
 	CreateWindow(width, height, name);
 }
+
+Window::Window() : m_windowPointer(nullptr), m_width(0), m_height(0) { }
 
 Window::~Window()
 {

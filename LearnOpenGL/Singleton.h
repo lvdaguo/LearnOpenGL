@@ -1,18 +1,20 @@
 #pragma once
 
+template<typename T>
 class Singleton
 {
-private:
+public:
     Singleton() { }
     ~Singleton() { };
 
+private:
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
 
 public:
-    static Singleton& GetInstance()
+    static T& GetInstance()
     {
-        static Singleton instance;
+        static T instance;
         return instance;
     }
 };

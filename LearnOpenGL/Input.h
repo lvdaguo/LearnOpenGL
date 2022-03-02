@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <functional>
+#include "Singleton.h"
+#include "Window.h"
 
 /// <summary>
 /// 按键枚举
@@ -20,31 +22,21 @@ enum class Key
 /// <summary>
 /// 管理输入
 /// </summary>
-class InputModule
+class Input : public Singleton<Input>
 {
 public:
-	InputModule(const class Window& window);
-	~InputModule();
+	Input();
+	~Input();
+	void Init();
 
 	void SetMouseEnabled(bool enabled) const;
 
 	bool GetKeyDown(enum class Key key) const
 	{
-		return glfwGetKey(m_windowPointer, static_cast<int>(key)) == GLFW_PRESS;
+		return glfwGetKey(GetWindowPointer(), static_cast<int>(key)) == GLFW_PRESS;
 	}
 
 	glm::vec2 GetMousePosition() const { return m_mousePosition; }
-	//glm::vec2 GetMouseOffset() const { 
-	//	// need fix
-	//	auto t = m_mouseOffset;
-	//	m_mouseOffset = glm::vec2();
-	//	return t; 
-	//}
-	//glm::vec2 GetMouseScroll() const {
-	//	auto t = m_mouseScroll;
-	//	m_mouseScroll = glm::vec2();
-	//	return t; 
-	//}
 
 	static void AddMouseOffsetCallback(std::function<void(float, float)> callback)
 	{
@@ -57,8 +49,6 @@ public:
 	}
 
 private:
-	GLFWwindow* m_windowPointer;
-
 	static void MouseCallback(GLFWwindow* window, double x, double y);
 	static void ScrollCallback(GLFWwindow* window, double x, double y);
 

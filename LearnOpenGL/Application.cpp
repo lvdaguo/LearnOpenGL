@@ -1,11 +1,12 @@
 #include <glad/glad.h> 
 // GLAD的头文件包含了正确的OpenGL头文件（例如GL/gl.h），所以需要在其它依赖于OpenGL的头文件之前包含GLAD
 
-#include <GLFW/glfw3.h>
-
 #include <string>
 #include <iostream>
 #include <functional>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Renderer.h"
 #include "Input.h"
@@ -17,10 +18,6 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Helper.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 const unsigned int width = 800, height = 600;
 const std::string window_name = "LearnOpenGL";
@@ -91,11 +88,16 @@ unsigned int indices[] =
 	33, 34, 35
 };
 
-void ProcessInput(const Renderer& renderer);
+void InitSingleton();
+void ProcessInput();
+
+Window& window = Window::GetInstance();
+Input& input = Input::GetInstance();
+Renderer& renderer = Renderer::GetInstance();
 
 int main()
 {
-	Renderer renderer(width, height, window_name);
+	InitSingleton();
 
 	VertexBuffer vbo(vertices, sizeof(vertices));
 	VertexBufferLayout layout;
@@ -135,23 +137,22 @@ int main()
 
 	glm::vec3 camPos = glm::vec3(0.0f, 0.0, 3.0f);
 
-	Camera cam(camPos, glm::vec3(0.0f, 1.0f, 0.0f), renderer.GetAspect());
-	cam.SetInputCallback(renderer.GetInputModule());
+	Camera cam(camPos, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	renderer.SetUpdateCallback([&](float deltaTime)
+	renderer.SetUpdateCallback([&]()
 	{
-		cam.ReceiveInput(renderer.GetInputModule());
-		ProcessInput(renderer);
-
-		glm::mat4 view = cam.GetViewMatrix();
-		glm::mat4 proj = cam.GetProjectionMatrix();
+		cam.Update();
+		ProcessInput();
 
 		texture1.Bind(0);
 		texture2.Bind(1);
 
 		renderer.Clear();
 
-		std::cout << Helper::GetDeltaTime() << std::endl;
+		glm::mat4 ViewProjection = cam.GetViewProjectionMatrix();
+		shader.SetUniformMat4("ViewProjection", ViewProjection);
+
+		std::cout << (Helper::GetDeltaTime()) << std::endl;
 
 		for (unsigned int i = 0; i < 10; ++i)
 		{
@@ -162,8 +163,6 @@ int main()
 
 			shader.Use();
 			shader.SetUniformMat4("model", model);
-			shader.SetUniformMat4("view", view);
-			shader.SetUniformMat4("projection", proj);
 
 			renderer.Draw(vao, ibo, shader);
 		}
@@ -174,9 +173,16 @@ int main()
 	return 0;
 }
 
-void ProcessInput(const Renderer& renderer)
+void InitSingleton()
 {
-	if (renderer.GetInputModule().GetKeyDown(Key::Escape))
+	window.Init(width, height, window_name);
+	input.Init();
+	renderer.Init();
+}
+
+void ProcessInput()
+{
+	if (input.GetKeyDown(Key::Escape))
 	{
 		std::cout << "按下了退出键，循环结束" << std::endl;
 		renderer.Quit();

@@ -4,15 +4,17 @@
 #include "Helper.h"
 #include "Camera.h"
 
-Camera::Camera(const glm::vec3& position, const glm::vec3& up, float aspect,
+Camera::Camera(const glm::vec3& position, const glm::vec3& up,
 	float moveSpeed, float mouseSensitivity, float fov,
 	float near, float far) :
-	m_position(position), m_up(up), m_aspect(aspect),
+	m_position(position), m_up(up),
 	m_front(0.0f, 0.0f, -1.0f), m_yaw(-90.0f), m_pitch(0.0f),
 	m_moveSpeed(moveSpeed), m_mouseSensitivity(mouseSensitivity), m_fov(fov),
 	m_near(near), m_far(far)
 {
+	m_aspect = Window::GetInstance().GetAspect();
 	UpdateFacing();
+	SetInputCallback();
 }
 
 Camera::~Camera() { }
@@ -32,30 +34,30 @@ glm::mat4 Camera::GetViewProjectionMatrix() const
 	return GetProjectionMatrix() * GetViewMatrix();
 }
 
-void Camera::SetInputCallback(const InputModule& inputModule)
+void Camera::SetInputCallback()
 {
-	inputModule.AddMouseOffsetCallback([this](float xOffset, float yOffset)
+	Input::GetInstance().AddMouseOffsetCallback([this](float xOffset, float yOffset)
 	{
 		SetDirection(xOffset, yOffset);
 	});
-	inputModule.AddMouseScrollCallback([this](float xOffset, float yOffset)
+	Input::GetInstance().AddMouseScrollCallback([this](float xOffset, float yOffset)
 	{
 		SetZoom(xOffset, yOffset);
 	});
 }
 
-void Camera::ReceiveInput(const InputModule& inputModule)
+void Camera::Update()
 {
-	SetMovement(inputModule);
+	SetMovement(Input::GetInstance());
 }
 
-void Camera::SetMovement(const InputModule& inputModule)
+void Camera::SetMovement(const Input& input)
 {
 	glm::vec2 dir = glm::vec2(0.0f, 0.0f);
-	if (inputModule.GetKeyDown(Key::A)) dir.x -= 1.0f;
-	else if (inputModule.GetKeyDown(Key::D)) dir.x += 1.0f;
-	else if (inputModule.GetKeyDown(Key::W)) dir.y += 1.0f;
-	else if (inputModule.GetKeyDown(Key::S)) dir.y -= 1.0f;
+	if (input.GetKeyDown(Key::A)) dir.x -= 1.0f;
+	else if (input.GetKeyDown(Key::D)) dir.x += 1.0f;
+	else if (input.GetKeyDown(Key::W)) dir.y += 1.0f;
+	else if (input.GetKeyDown(Key::S)) dir.y -= 1.0f;
 	else return;
 
 	float velocity = m_moveSpeed * Helper::GetDeltaTime();

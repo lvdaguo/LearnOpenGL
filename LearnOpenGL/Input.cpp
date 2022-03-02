@@ -1,33 +1,35 @@
 #include "Input.h"
-#include "Window.h"
 
-glm::vec2 InputModule::m_mousePosition = glm::vec2();
-glm::vec2 InputModule::m_screenCenter = glm::vec2();
-std::vector<std::function<void(float, float)>> InputModule::m_mouseOffsetCallback = { };
-std::vector<std::function<void(float, float)>> InputModule::m_mouseScrollCallback = { };
+glm::vec2 Input::m_mousePosition = glm::vec2();
+glm::vec2 Input::m_screenCenter = glm::vec2();
+std::vector<std::function<void(float, float)>> Input::m_mouseOffsetCallback = { };
+std::vector<std::function<void(float, float)>> Input::m_mouseScrollCallback = { };
 
-InputModule::InputModule(const Window& window) : 
-	m_windowPointer(window.GetWindowPointer())
+Input::Input() { }
+
+void Input::Init()
 {
+	const Window& window = Window::GetInstance();
+
 	SetMouseEnabled(false);
 
 	float centerX = window.GetWidth() / static_cast<float>(2);
 	float centerY = window.GetHeight() / static_cast<float>(2);
 	m_screenCenter = glm::vec2(centerX, centerY);
 
-	glfwSetCursorPosCallback(m_windowPointer, MouseCallback);
-	glfwSetScrollCallback(m_windowPointer, ScrollCallback);
+	glfwSetCursorPosCallback(GetWindowPointer(), MouseCallback);
+	glfwSetScrollCallback(GetWindowPointer(), ScrollCallback);
 }
 
-InputModule::~InputModule() { }
+Input::~Input() { }
 
-void InputModule::SetMouseEnabled(bool enabled) const
+void Input::SetMouseEnabled(bool enabled) const
 {
 	GLenum mouseStatus = enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
-	glfwSetInputMode(m_windowPointer, GLFW_CURSOR, mouseStatus);
+	glfwSetInputMode(GetWindowPointer(), GLFW_CURSOR, mouseStatus);
 }
 
-void InputModule::MouseCallback(GLFWwindow* window, double x, double y)
+void Input::MouseCallback(GLFWwindow* window, double x, double y)
 {
 	m_mousePosition = glm::vec2(static_cast<float>(x), static_cast<float>(y));
 
@@ -41,7 +43,7 @@ void InputModule::MouseCallback(GLFWwindow* window, double x, double y)
 	mousePositionBefore = m_mousePosition;
 }
 
-void InputModule::ScrollCallback(GLFWwindow* window, double x, double y)
+void Input::ScrollCallback(GLFWwindow* window, double x, double y)
 {
 	float xOffset = static_cast<float>(x);
 	float yOffset = static_cast<float>(y);

@@ -9,7 +9,7 @@ const glm::vec3 WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 class Camera
 {
 public:
-	Camera(const glm::vec3& position, const glm::vec3& up, float aspect,
+	Camera(const glm::vec3& position, const glm::vec3& up,
 		float moveSpeed = 0.1f, float mouseSensitivity = 0.1f, float fov = 45.0f,
 		float near = 0.1f, float far = 50.0f);
 	~Camera();
@@ -18,8 +18,8 @@ public:
 	glm::mat4 GetProjectionMatrix() const;
 	glm::mat4 GetViewProjectionMatrix() const;
 
-	void SetInputCallback(const class InputModule& inputModule);
-	void ReceiveInput(const class InputModule& inputModule);
+	void SetInputCallback();
+	void Update();
 
 private:
 	glm::vec3 m_position;
@@ -33,7 +33,7 @@ private:
 	float m_moveSpeed;
 	float m_mouseSensitivity;
 
-	void SetMovement(const InputModule& inputModule);
+	void SetMovement(const Input& inputModule);
 	void SetDirection(float xOffset, float yOffset);
 	void SetZoom(float xOffset, float yOffset);
 	void UpdateFacing();
