@@ -143,6 +143,24 @@ int main()
 
 		glm::mat4 ViewProjection = cam.GetViewProjectionMatrix();
 		cubeShader.Use();
+
+		cubeShader.SetUniformVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		cubeShader.SetUniformVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		cubeShader.SetUniformVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		cubeShader.SetUniform1f("material.shininess", 32);
+
+		glm::vec3 lightColor;
+		lightColor.x = sin(Helper::GetRealTime() * 2.0f);
+		lightColor.y = sin(Helper::GetRealTime() * 0.7f);
+		lightColor.z = sin(Helper::GetRealTime() * 1.3f);
+
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = lightColor * glm::vec3(0.2f);
+
+		cubeShader.SetUniformVec3("light.diffuse", diffuseColor);
+		cubeShader.SetUniformVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		cubeShader.SetUniformVec3("light.ambient", ambientColor);
+
 		cubeShader.SetUniformMat4("ViewProjection", ViewProjection);
 		cubeShader.SetUniformMat4("model", glm::mat4(1.0f));
 		cubeShader.SetUniformVec3("viewPos", camPos);

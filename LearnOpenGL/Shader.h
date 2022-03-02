@@ -29,6 +29,7 @@ private:
 public:
 	void SetUniform4f(const std::string& name, float x, float y, float z, float w);
 	void SetUniform3f(const std::string& name, float x, float y, float z);
+	void SetUniform1f(const std::string& name, float f);
 	void SetUniform1i(const std::string& name, int i);
 
 	void SetUniformVec3(const std::string& name, const glm::vec3& vec);
