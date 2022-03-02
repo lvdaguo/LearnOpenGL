@@ -29,47 +29,48 @@ std::string light_shader_path = "Assets/Shaders/LightShader.glsl";
 
 // 图形初始化
 float vertices[] = {
-	 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	  0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	// positions          // normals           // texture coords
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-	 -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	  0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	 -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	 -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-	 -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-	  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-	 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	  0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-	 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	  0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 // 顶点坐标按顺时针
 
@@ -105,6 +106,7 @@ int main()
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(3);
+	layout.Push<float>(2);
 
 	VertexArray cubeVAO, lightVAO;
 	cubeVAO.AddLayout(vbo, layout);
@@ -117,12 +119,8 @@ int main()
 
 	renderer.SetClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-	//Texture texture1("Assets/Textures/container.jpg");
-	//Texture texture2("Assets/Textures/awesomeface.png");
-
-	//cubeShader.Use();
-	//cubeShader.SetUniform1i("texture1", 0);
-	//cubeShader.SetUniform1i("texture2", 1);
+	Texture texture3("Assets/Textures/container2.png");
+	Texture texture4("Assets/Textures/container2_specular.png");
 
 	glEnable(GL_BLEND);
 
@@ -136,34 +134,26 @@ int main()
 		cam.Update();
 		ProcessInput();
 
-		//texture1.Bind(0);
-		//texture2.Bind(1);
-
 		renderer.Clear();
 
 		glm::mat4 ViewProjection = cam.GetViewProjectionMatrix();
 		cubeShader.Use();
 
-		cubeShader.SetUniformVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-		cubeShader.SetUniformVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-		cubeShader.SetUniformVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		cubeShader.SetUniform1i("material.diffuse", 0);
+		cubeShader.SetUniform1i("material.specular", 1);
+
+		texture3.Bind(0);
+		texture4.Bind(1);
+
 		cubeShader.SetUniform1f("material.shininess", 32);
 
-		glm::vec3 lightColor;
-		lightColor.x = sin(Helper::GetRealTime() * 2.0f);
-		lightColor.y = sin(Helper::GetRealTime() * 0.7f);
-		lightColor.z = sin(Helper::GetRealTime() * 1.3f);
-
-		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-		glm::vec3 ambientColor = lightColor * glm::vec3(0.2f);
-
-		cubeShader.SetUniformVec3("light.diffuse", diffuseColor);
+		cubeShader.SetUniformVec3("light.diffuse", glm::vec3(0.5f));
 		cubeShader.SetUniformVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-		cubeShader.SetUniformVec3("light.ambient", ambientColor);
+		cubeShader.SetUniformVec3("light.ambient", glm::vec3(0.1f));
 
 		cubeShader.SetUniformMat4("ViewProjection", ViewProjection);
 		cubeShader.SetUniformMat4("model", glm::mat4(1.0f));
-		cubeShader.SetUniformVec3("viewPos", camPos);
+		cubeShader.SetUniformVec3("viewPos", cam.GetPosition());
 		cubeShader.SetUniformVec3("lightPos", lightPos);
 		cubeShader.SetUniformVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		cubeShader.SetUniformVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));

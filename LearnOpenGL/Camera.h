@@ -23,6 +23,9 @@ private:
 	void RemoveInputCallback();
 	void SetInputCallback();
 
+public:
+	glm::vec3 GetPosition() const { return m_position; }
+
 private:
 	glm::vec3 m_position;
 	glm::vec3 m_up, m_front, m_right;
