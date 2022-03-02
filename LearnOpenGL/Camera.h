@@ -25,6 +25,7 @@ private:
 
 public:
 	glm::vec3 GetPosition() const { return m_position; }
+	glm::vec3 GetFront() const { return m_front; }
 
 private:
 	glm::vec3 m_position;

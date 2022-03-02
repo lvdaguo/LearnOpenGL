@@ -129,6 +129,19 @@ int main()
 
 	glm::vec3 lightPos = glm::vec3(1.2f, 1.0f, 2.0f);
 
+	glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	renderer.SetUpdateCallback([&]()
 	{
 		cam.Update();
@@ -147,16 +160,24 @@ int main()
 
 		cubeShader.SetUniform1f("material.shininess", 32);
 
-		cubeShader.SetUniformVec3("light.diffuse", glm::vec3(0.5f));
+		cubeShader.SetUniformVec3("light.diffuse", glm::vec3(0.8f));
 		cubeShader.SetUniformVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 		cubeShader.SetUniformVec3("light.ambient", glm::vec3(0.1f));
+		// cubeShader.SetUniformVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+
+		cubeShader.SetUniform1f("light.constant", 1.0f);
+		cubeShader.SetUniform1f("light.linear", 0.09f);
+		cubeShader.SetUniform1f("light.quadratic", 0.032f);
+		cubeShader.SetUniformVec3("light.direction", cam.GetFront());
+		cubeShader.SetUniform1f("light.cutOff", glm::cos(glm::radians(12.5f)));
+		cubeShader.SetUniform1f("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
 		cubeShader.SetUniformMat4("ViewProjection", ViewProjection);
-		cubeShader.SetUniformMat4("model", glm::mat4(1.0f));
 		cubeShader.SetUniformVec3("viewPos", cam.GetPosition());
-		cubeShader.SetUniformVec3("lightPos", lightPos);
-		cubeShader.SetUniformVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-		cubeShader.SetUniformVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		// cubeShader.SetUniformVec3("lightPos", lightPos);
+		cubeShader.SetUniformVec3("lightPos", cam.GetPosition());
+		// cubeShader.SetUniformVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		// cubeShader.SetUniformVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
@@ -166,7 +187,18 @@ int main()
 		lightShader.SetUniformMat4("ViewProjection", ViewProjection);
 		lightShader.SetUniformMat4("model", model);
 
-		renderer.Draw(cubeVAO, ibo, cubeShader);
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 modell = glm::mat4(1.0f);
+			modell = glm::translate(modell, cubePositions[i]);
+			float angle = 20.0f * i;
+			modell = glm::rotate(modell, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			cubeShader.Use();
+			cubeShader.SetUniformMat4("model", modell);
+
+			renderer.Draw(cubeVAO, ibo, cubeShader);
+		}
+		// renderer.Draw(cubeVAO, ibo, cubeShader);
 		renderer.Draw(lightVAO, ibo, lightShader);
 	});
 
