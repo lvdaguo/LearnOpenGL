@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"

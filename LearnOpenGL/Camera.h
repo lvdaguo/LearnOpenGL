@@ -17,9 +17,11 @@ public:
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
 	glm::mat4 GetViewProjectionMatrix() const;
-
-	void SetInputCallback();
 	void Update();
+
+private:
+	void RemoveInputCallback();
+	void SetInputCallback();
 
 private:
 	glm::vec3 m_position;
@@ -33,7 +35,10 @@ private:
 	float m_moveSpeed;
 	float m_mouseSensitivity;
 
-	void SetMovement(const Input& inputModule);
+	class Action2<float, float> m_mouseOffsetCallback;
+	class Action2<float, float> m_mouseScrollCallback;
+
+	void SetMovement(const class Input& inputModule);
 	void SetDirection(float xOffset, float yOffset);
 	void SetZoom(float xOffset, float yOffset);
 	void UpdateFacing();

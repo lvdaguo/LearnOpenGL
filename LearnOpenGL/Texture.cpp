@@ -1,7 +1,7 @@
 #include <glad/glad.h>
+#include <iostream>
 #include "Texture.h"
 #include "stb_image.h"
-#include <iostream>
 
 Texture::Texture(const std::string& filePath)
 {

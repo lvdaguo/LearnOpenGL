@@ -1,6 +1,6 @@
 #include <glad/glad.h>
-#include "Input.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "Input.h"
 #include "Helper.h"
 #include "Camera.h"
 
@@ -36,14 +36,23 @@ glm::mat4 Camera::GetViewProjectionMatrix() const
 
 void Camera::SetInputCallback()
 {
-	Input::GetInstance().AddMouseOffsetCallback([this](float xOffset, float yOffset)
-	{
-		SetDirection(xOffset, yOffset);
-	});
-	Input::GetInstance().AddMouseScrollCallback([this](float xOffset, float yOffset)
-	{
-		SetZoom(xOffset, yOffset);
-	});
+	m_mouseOffsetCallback = Action2<float, float>([this](float xOffset, float yOffset)
+		{
+			SetDirection(xOffset, yOffset);
+		});
+	Input::GetInstance().GetMouseOffsetEvent().Add(m_mouseOffsetCallback);
+
+	m_mouseScrollCallback = Action2<float, float>([this](float xOffset, float yOffset)
+		{
+			SetZoom(xOffset, yOffset);
+		});
+	Input::GetInstance().GetMouseScrollEvent().Add(m_mouseScrollCallback);
+}
+
+void Camera::RemoveInputCallback()
+{
+	Input::GetInstance().GetMouseOffsetEvent().Remove(m_mouseOffsetCallback);
+	Input::GetInstance().GetMouseScrollEvent().Remove(m_mouseScrollCallback);
 }
 
 void Camera::Update()

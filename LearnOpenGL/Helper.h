@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Renderer.h"
 
 /// <summary>
 /// æ≤Ã¨π§æﬂ¿‡
@@ -12,9 +11,13 @@ class Helper
 private:
 	static float m_deltaTime;
 	static void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
-	friend void Renderer::Run();
+	friend class Renderer;
+
+	static unsigned int m_nextID;
 
 public:
+	static unsigned int GenerateID() { return m_nextID++; }
+
 	static float GetRealTime() { return static_cast<float>(glfwGetTime()); }
 	static float GetDeltaTime() { return m_deltaTime; }
 

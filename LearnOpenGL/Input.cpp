@@ -1,9 +1,10 @@
+#include <glad/glad.h>
 #include "Input.h"
 
 glm::vec2 Input::m_mousePosition = glm::vec2();
 glm::vec2 Input::m_screenCenter = glm::vec2();
-std::vector<std::function<void(float, float)>> Input::m_mouseOffsetCallback = { };
-std::vector<std::function<void(float, float)>> Input::m_mouseScrollCallback = { };
+Event2<float, float> Input::m_mouseOffsetEvent = Event2<float, float>();
+Event2<float, float> Input::m_mouseScrollEvent = Event2<float, float>();
 
 Input::Input() { }
 
@@ -39,7 +40,7 @@ void Input::MouseCallback(GLFWwindow* window, double x, double y)
 	float xOffset = m_mousePosition.x - mousePositionBefore.x;
 	float yOffset = mousePositionBefore.y - m_mousePosition.y;
 
-	for (auto callback : m_mouseOffsetCallback) callback(xOffset, yOffset);
+	m_mouseOffsetEvent.Invoke(xOffset, yOffset);
 	mousePositionBefore = m_mousePosition;
 }
 
@@ -47,5 +48,5 @@ void Input::ScrollCallback(GLFWwindow* window, double x, double y)
 {
 	float xOffset = static_cast<float>(x);
 	float yOffset = static_cast<float>(y);
-	for (auto callback : m_mouseScrollCallback) callback(xOffset, yOffset);
+	m_mouseOffsetEvent.Invoke(xOffset, yOffset);
 }

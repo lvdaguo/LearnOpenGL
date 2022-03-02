@@ -2,10 +2,9 @@
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <vector>
-#include <functional>
 #include "Singleton.h"
 #include "Window.h"
+#include "Event.h"
 
 /// <summary>
 /// °´¼üÃ¶¾Ù
@@ -38,22 +37,15 @@ public:
 
 	glm::vec2 GetMousePosition() const { return m_mousePosition; }
 
-	static void AddMouseOffsetCallback(std::function<void(float, float)> callback)
-	{
-		m_mouseOffsetCallback.push_back(callback);
-	}
-
-	static void AddMouseScrollCallback(std::function<void(float, float)> callback)
-	{
-		m_mouseScrollCallback.push_back(callback);
-	}
+	static class Event2<float, float>& GetMouseOffsetEvent() { return m_mouseOffsetEvent; }
+	static class Event2<float, float>& GetMouseScrollEvent() { return m_mouseScrollEvent; }
 
 private:
 	static void MouseCallback(GLFWwindow* window, double x, double y);
 	static void ScrollCallback(GLFWwindow* window, double x, double y);
 
-	static std::vector<std::function<void(float, float)>> m_mouseOffsetCallback;
-	static std::vector<std::function<void(float, float)>> m_mouseScrollCallback;
+	static class Event2<float, float> m_mouseOffsetEvent;
+	static class Event2<float, float> m_mouseScrollEvent;
 
 	static glm::vec2 m_screenCenter;
 	static glm::vec2 m_mousePosition;

@@ -18,6 +18,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Helper.h"
+#include "Event.h"
 
 const unsigned int width = 800, height = 600;
 const std::string window_name = "LearnOpenGL";

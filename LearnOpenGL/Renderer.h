@@ -1,10 +1,9 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include <string>
 #include <functional>
 #include "Singleton.h"
-#include "Input.h"
+#include "Window.h"
 
 /// <summary>
 /// äÖÈ¾Æ÷
