@@ -3,16 +3,31 @@
 #include "Texture.h"
 #include "stb_image.h"
 
-Texture::Texture(const std::string& filePath)
+Texture::Texture(const std::string& filename, const std::string& directory, const std::string& type) :
+	m_type(type)
 {
 	CreateTexture();
 	stbi_set_flip_vertically_on_load(true);
-	LoadTextureFromPicture(filePath);
+	std::string filepath = directory + '/' + filename;
+	LoadTextureFromPicture(filepath);
 }
+
+Texture::Texture(const Texture& other) :
+	m_textureID(other.m_textureID), m_width(other.m_width),
+	m_height(other.m_height), m_type(other.m_type) { }
+
+//Texture::Texture(Texture&& other) noexcept :
+//	m_width(other.m_width), m_height(other.m_height),
+//	m_type(std::move(other.m_type)),
+//	m_textureID(other.m_textureID)
+//{
+//	other.m_textureID = 0;
+//}
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &m_textureID);
+	//if (m_textureID == 0) return;
+	//glDeleteTextures(1, &m_textureID);
 }
 
 void Texture::CreateTexture()
@@ -29,8 +44,8 @@ void Texture::CreateTexture()
 
 void Texture::LoadTextureFromPicture(const std::string& filePath)
 {
-	int nrChannels;
-	unsigned char* data = stbi_load(filePath.c_str(), &m_width, &m_height, &nrChannels, 0);
+	int channelCount;
+	unsigned char* data = stbi_load(filePath.c_str(), &m_width, &m_height, &channelCount, 0);
 	if (data == nullptr)
 	{
 		std::cout << "加载纹理失败，路径为" << filePath << std::endl;
@@ -38,12 +53,19 @@ void Texture::LoadTextureFromPicture(const std::string& filePath)
 		return;
 	}
 	
-	std::string extension = GetFileExtension(filePath);
-
+	// std::string extension = GetFileExtension(filePath);
+	/*
 	GLenum channelType = 0;
 	if      (extension == "png")	channelType = GL_RGBA;
 	else if (extension == "jpg")    channelType = GL_RGB;
 	else std::cout << "未定义的文件拓展名:\n" << extension << std::endl;
+	*/
+
+	GLenum channelType = 0;
+	if (channelCount == 1) channelType = GL_RED;
+	else if (channelCount == 3) channelType = GL_RGB;
+	else if (channelCount == 4) channelType = GL_RGBA;
+	else std::cout << "未定义的颜色通道数量: " << channelCount << std::endl;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, channelType, m_width, m_height, 0, channelType, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);

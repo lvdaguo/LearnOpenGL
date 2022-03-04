@@ -57,6 +57,12 @@
     <ClCompile Include="Transform.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -107,10 +113,18 @@
     <ClInclude Include="Action.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\VertexShader.glsl" />
     <None Include="Assets\Shaders\FragmentShader.glsl" />
     <None Include="Assets\Shaders\LightShader.glsl" />
+    <None Include="Assets\Shaders\ModelVertexShader.glsl" />
+    <None Include="Assets\Shaders\ModelFragmentShader.glsl" />
   </ItemGroup>
 </Project>

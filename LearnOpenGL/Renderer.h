@@ -36,5 +36,7 @@ public:
 	void Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
 	void Draw(const class VertexArray& vertexArray, const class IndexBuffer& indexBuffer, const class Shader& shader);
+	void Draw(const class Mesh& mesh, class Shader& shader);
+	void Draw(const class Model& model, class Shader& shader);
 };
 

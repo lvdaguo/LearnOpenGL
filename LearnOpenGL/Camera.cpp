@@ -55,9 +55,13 @@ void Camera::RemoveInputCallback()
 	Input::GetInstance().GetMouseScrollEvent().Remove(m_mouseScrollCallback);
 }
 
+#include <iostream>
+
 void Camera::Update()
 {
 	SetMovement(Input::GetInstance());
+	// m_yaw += 1.0f * m_mouseSensitivity * Helper::GetDeltaTime();
+	std::cout << m_yaw << std::endl;
 }
 
 void Camera::SetMovement(const Input& input)
@@ -84,13 +88,10 @@ void Camera::SetDirection(float xOffset, float yOffset)
 	UpdateFacing();
 }
 
-#include <iostream>
-
 void Camera::SetZoom(float xOffset, float yOffset)
 {
 	float scrollY = yOffset * Helper::GetDeltaTime();
 	m_fov = glm::clamp(m_fov - scrollY, MinFov, MaxFov);
-	std::cout << m_fov << std::endl;
 }
 
 void Camera::UpdateFacing()

@@ -1,13 +1,19 @@
 #include <glad/glad.h> 
 // GLAD的头文件包含了正确的OpenGL头文件（例如GL/gl.h），所以需要在其它依赖于OpenGL的头文件之前包含GLAD
 
+#include <string>
 #include <iostream>
+#include <vector>
 
 #include "Renderer.h"
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Helper.h"
+
+#include "Texture.h"
+#include "Mesh.h"
+#include "Model.h"
 
 Renderer::Renderer() {}
 
@@ -71,4 +77,34 @@ void Renderer::Draw(const VertexArray& vertexArray, const IndexBuffer& indexBuff
 	indexBuffer.Bind();
 	shader.Use();
 	glDrawElements(GL_TRIANGLES, indexBuffer.GetCount(), GL_UNSIGNED_INT, NULL);
+}
+
+void Renderer::Draw(const Mesh& mesh, Shader& shader)
+{
+	const std::vector<Texture>& textures = mesh.GetTextures();
+	unsigned int diffuseNum = 1, specularNum = 1;
+
+	shader.Use();
+	for (unsigned int i = 0; i < textures.size(); ++i)
+	{
+		std::string num;
+		const std::string& type = textures[i].GetType();
+		if      (type == "texture_diffuse")  num = std::to_string(diffuseNum++);
+		else if (type == "texture_specular") num = std::to_string(specularNum++);
+
+		textures[i].Bind(i);
+		shader.SetUniform1i((type + num).c_str(), i);
+	}
+
+	mesh.GetVertexArray().Bind();
+	mesh.GetIndexBuffer().Bind();
+	glDrawElements(GL_TRIANGLES, mesh.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, NULL);
+}
+
+void Renderer::Draw(const Model& model, Shader& shader)
+{
+	for (const Mesh& mesh : model.GetMeshes())
+	{
+		Draw(mesh, shader);
+	}
 }
