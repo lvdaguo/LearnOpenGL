@@ -128,7 +128,7 @@ int main()
 {
 	InitSingleton();
 
-	renderer.SetClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+	renderer.SetClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 	Camera cam(camPos, camUp);
 	Model model(model_path);
 
@@ -156,18 +156,34 @@ int main()
 
     //glDepthFunc(GL_ALWAYS);
 
-	renderer.SetUpdateCallback([&]()
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	
+    renderer.SetUpdateCallback([&]()
 	{
 		cam.Update();
 		ProcessInput();
-
-		renderer.Clear();
+        // renderer.Clear();
         
-        normalShader.Use();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        // normalShader.SetInt("texture1", 0);
+        glStencilMask(0x00);
+
+        // draw floor
+        planeTexture.Bind();
+        normalShader.SetMatrix4("model", glm::mat4(1.0f));
+        renderer.Draw(planeVAO, planeIBO, normalShader);
+
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
+
+        // draw two containers
         cubeTexture.Bind();
 
+        normalShader.Use();
 		glm::mat4 view_projection = cam.GetViewProjectionMatrix();
         normalShader.SetMatrix4("view_projection", view_projection);
 
@@ -181,10 +197,28 @@ int main()
         normalShader.SetMatrix4("model", mod);
         renderer.Draw(cubeVAO, cubeIBO, normalShader);
 
-        planeTexture.Bind();
-        // normalShader.SetInt("texture1", 1);
-        normalShader.SetMatrix4("model", glm::mat4(1.0f));
-        renderer.Draw(planeVAO, planeIBO, normalShader);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glDisable(GL_DEPTH_TEST);
+
+        outlineShader.Use();
+        outlineShader.SetMatrix4("view_projection", view_projection);
+
+        mod = glm::mat4(1.0f);
+        mod = glm::translate(mod, glm::vec3(-1.0f, 0.0f, -1.0f));
+        mod = glm::scale(mod, glm::vec3(1.1f));
+        outlineShader.SetMatrix4("model", mod);
+        renderer.Draw(cubeVAO, cubeIBO, outlineShader);
+
+        mod = glm::mat4(1.0f);
+        mod = glm::translate(mod, glm::vec3(2.0f, 0.0f, 0.0f));
+        mod = glm::scale(mod, glm::vec3(1.1f));
+        outlineShader.SetMatrix4("model", mod);
+        renderer.Draw(cubeVAO, cubeIBO, outlineShader);
+
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glEnable(GL_DEPTH_TEST);
 
         //shader.SetMatrix4("view_projection", view_projection);
 		//shader.SetMatrix4("model", mod);
