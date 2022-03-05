@@ -147,6 +147,7 @@
     <None Include="Assets\Shaders\NormalVertexShader.glsl" />
     <None Include="Assets\Shaders\NormalFragmentShader.glsl" />
     <None Include="Assets\Shaders\NormalColorShader.glsl" />
+    <None Include="Assets\Shaders\PostprocessShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\awesomeface.png">
