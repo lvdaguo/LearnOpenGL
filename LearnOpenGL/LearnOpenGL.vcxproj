@@ -189,6 +189,10 @@
     <None Include="Assets\Shaders\NormalFragmentShader.glsl" />
     <None Include="Assets\Shaders\NormalVertexShader.glsl" />
     <None Include="Assets\Shaders\PostprocessShader.glsl" />
+    <None Include="Assets\Shaders\ReflectFragmentShader.glsl" />
+    <None Include="Assets\Shaders\ReflectVertexShader.glsl" />
+    <None Include="Assets\Shaders\SkyboxFragmentShader.glsl" />
+    <None Include="Assets\Shaders\SkyboxVertexShader.glsl" />
     <None Include="Assets\Shaders\VertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>

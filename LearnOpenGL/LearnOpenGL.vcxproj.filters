@@ -148,6 +148,10 @@
     <None Include="Assets\Shaders\NormalFragmentShader.glsl" />
     <None Include="Assets\Shaders\NormalColorShader.glsl" />
     <None Include="Assets\Shaders\PostprocessShader.glsl" />
+    <None Include="Assets\Shaders\SkyboxVertexShader.glsl" />
+    <None Include="Assets\Shaders\SkyboxFragmentShader.glsl" />
+    <None Include="Assets\Shaders\ReflectFragmentShader.glsl" />
+    <None Include="Assets\Shaders\ReflectVertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\awesomeface.png">
