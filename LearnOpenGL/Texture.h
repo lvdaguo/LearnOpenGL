@@ -2,14 +2,15 @@
 
 #include <string>
 
+/// <summary>
+/// Œ∆¿Ì
+/// </summary>
 class Texture
 {
 public:
-	// Texture(const std::string& path, const std::string& type = "");
-	// Texture() { }
-	Texture(const std::string& filename, const std::string& directory, const std::string& type = "");
-	Texture(const class Texture& other);
-	//Texture(class Texture&& other) noexcept;
+	Texture(const std::string& filepath, const std::string& type = "");
+	Texture(const class Texture& other) = delete;
+	class Texture& operator = (const class Texture& other) = delete;
 	~Texture();
 
 private:
@@ -19,11 +20,9 @@ private:
 
 	void CreateTexture();
 	void LoadTextureFromPicture(const std::string& filePath);
-	std::string GetFileExtension(const std::string& filePath) const;
 
 public:
 	void Bind(unsigned int slot = 0) const;
-	void Unbind() const;
 
 	int GetWidth() const { return m_width; }
 	int GetHeight() const { return m_height; }

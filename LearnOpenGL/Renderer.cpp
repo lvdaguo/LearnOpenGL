@@ -15,18 +15,10 @@
 #include "Mesh.h"
 #include "Model.h"
 
-Renderer::Renderer() {}
-
 void Renderer::Init()
 {
 	InitGLAD();
 	glEnable(GL_DEPTH_TEST);
-}
-
-Renderer::~Renderer() 
-{
-	// 渲染器析构操作
-	// 窗口成员对象应最后析构
 }
 
 void Renderer::InitGLAD()
@@ -81,19 +73,19 @@ void Renderer::Draw(const VertexArray& vertexArray, const IndexBuffer& indexBuff
 
 void Renderer::Draw(const Mesh& mesh, Shader& shader)
 {
-	const std::vector<Texture>& textures = mesh.GetTextures();
+	const std::vector<std::shared_ptr<Texture>>& textures = mesh.GetTextures();
 	unsigned int diffuseNum = 1, specularNum = 1;
 
 	shader.Use();
 	for (unsigned int i = 0; i < textures.size(); ++i)
 	{
 		std::string num;
-		const std::string& type = textures[i].GetType();
+		const std::string& type = textures[i]->GetType();
 		if      (type == "texture_diffuse")  num = std::to_string(diffuseNum++);
 		else if (type == "texture_specular") num = std::to_string(specularNum++);
 
-		textures[i].Bind(i);
-		shader.SetUniform1i((type + num).c_str(), i);
+		textures[i]->Bind(i);
+		shader.SetInt((type + num).c_str(), i);
 	}
 
 	mesh.GetVertexArray().Bind();

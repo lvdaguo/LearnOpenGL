@@ -3,31 +3,16 @@
 #include "Texture.h"
 #include "stb_image.h"
 
-Texture::Texture(const std::string& filename, const std::string& directory, const std::string& type) :
-	m_type(type)
+Texture::Texture(const std::string& filepath, const std::string& type)
 {
 	CreateTexture();
 	stbi_set_flip_vertically_on_load(true);
-	std::string filepath = directory + '/' + filename;
 	LoadTextureFromPicture(filepath);
 }
 
-Texture::Texture(const Texture& other) :
-	m_textureID(other.m_textureID), m_width(other.m_width),
-	m_height(other.m_height), m_type(other.m_type) { }
-
-//Texture::Texture(Texture&& other) noexcept :
-//	m_width(other.m_width), m_height(other.m_height),
-//	m_type(std::move(other.m_type)),
-//	m_textureID(other.m_textureID)
-//{
-//	other.m_textureID = 0;
-//}
-
 Texture::~Texture()
 {
-	//if (m_textureID == 0) return;
-	//glDeleteTextures(1, &m_textureID);
+	glDeleteTextures(1, &m_textureID);
 }
 
 void Texture::CreateTexture()
@@ -53,14 +38,6 @@ void Texture::LoadTextureFromPicture(const std::string& filePath)
 		return;
 	}
 	
-	// std::string extension = GetFileExtension(filePath);
-	/*
-	GLenum channelType = 0;
-	if      (extension == "png")	channelType = GL_RGBA;
-	else if (extension == "jpg")    channelType = GL_RGB;
-	else std::cout << "未定义的文件拓展名:\n" << extension << std::endl;
-	*/
-
 	GLenum channelType = 0;
 	if (channelCount == 1) channelType = GL_RED;
 	else if (channelCount == 3) channelType = GL_RGB;
@@ -73,29 +50,8 @@ void Texture::LoadTextureFromPicture(const std::string& filePath)
 	stbi_image_free(data); // 释放空间
 }
 
-std::string Texture::GetFileExtension(const std::string& filePath) const
-{
-	std::string extension;
-	for (int i = filePath.length() - 1; i >= 0; --i)
-	{
-		if (filePath[i] == '.')
-		{
-			std::reverse(extension.begin(), extension.end());
-			return extension;
-		}
-		extension.push_back(filePath[i]);
-	}
-	std::cout << filePath << "该文件路径找不到拓展名" << std::endl;
-	return "";
-}
-
 void Texture::Bind(unsigned int slot /*= 0*/) const
 {
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
-}
-
-void Texture::Unbind() const
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
 }

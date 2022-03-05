@@ -6,13 +6,13 @@
 #include "Window.h"
 
 /// <summary>
-/// 渲染器
+/// 渲染器单例
 /// </summary>
 class Renderer : public Singleton<Renderer>
 {
 public:
-	Renderer();
-	~Renderer();
+	Renderer() = default;
+	~Renderer() = default;
 	void Init();
 
 private:
@@ -29,6 +29,7 @@ public:
 	/// <param name="func"> 回调函数 </param>
 	void SetUpdateCallback(std::function<void()> func) { m_updateCallback = func; }
 
+	/// <summary> 启动，开始渲染循环 </summary>
 	void Run();
 	void Quit() const { glfwSetWindowShouldClose(Window::GetInstance().GetWindowPointer(), true); }
 

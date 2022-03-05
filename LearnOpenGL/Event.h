@@ -4,6 +4,9 @@
 #include <functional>
 #include "Action.h"
 
+// 事件模板类
+// 最多支持4个输入参数
+
 class Event
 {
 public:
@@ -52,6 +55,8 @@ public:
 	}
 
 private:
+	// 通过Action的id存放其function
+	// 同一个Action不能同时订阅同一个事件
 	std::unordered_map<unsigned int, func_t> m_actions;
 };
 

@@ -11,6 +11,8 @@ class Shader
 {
 public:
 	Shader(const std::string& vertexShaderPath, const std::string fragmentShaderPath);
+	Shader(const class Shader& other) = delete;
+	class Shader& operator = (const class Shader& other) = delete;
 	~Shader();
 
 private:
@@ -27,14 +29,14 @@ private:
 	int GetUniformLocation(const std::string& name);
 
 public:
-	void SetUniform4f(const std::string& name, float x, float y, float z, float w);
-	void SetUniform3f(const std::string& name, float x, float y, float z);
-	void SetUniform1f(const std::string& name, float f);
-	void SetUniform1i(const std::string& name, int i);
+	void SetFloat4(const std::string& name, float x, float y, float z, float w);
+	void SetFloat3(const std::string& name, float x, float y, float z);
+	void SetFloat(const std::string& name, float f);
+	void SetInt(const std::string& name, int i);
 
-	void SetUniformVec3(const std::string& name, const glm::vec3& vec);
-	void SetUniformVec4(const std::string& name, const glm::vec4& vec);
-	void SetUniformMat4(const std::string& name, const glm::mat4& mat);
+	void SetVector3(const std::string& name, const glm::vec3& vec);
+	void SetVector4(const std::string& name, const glm::vec4& vec);
+	void SetMatrix4(const std::string& name, const glm::mat4& mat);
 
 private:
 	unsigned int m_shaderProgramID;

@@ -186,6 +186,13 @@
     <None Include="Assets\Shaders\ModelFragmentShader.glsl" />
     <None Include="Assets\Shaders\ModelVertexShader.glsl" />
     <None Include="Assets\Shaders\VertexShader.glsl" />
+    <None Include="assimp-vc130-mtd.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Textures\awesomeface.png" />
+    <Image Include="Assets\Textures\container.jpg" />
+    <Image Include="Assets\Textures\container2.png" />
+    <Image Include="Assets\Textures\container2_specular.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

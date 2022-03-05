@@ -11,8 +11,11 @@ class Helper
 private:
 	static float m_deltaTime;
 	static void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
+
+	// 渲染器单例作为友元，通过其每帧更新deltatime
 	friend class Renderer;
 
+	// 全局唯一的ID， 用于唯一化事件回调
 	static unsigned int m_nextID;
 
 public:
@@ -21,6 +24,7 @@ public:
 	static float GetRealTime() { return static_cast<float>(glfwGetTime()); }
 	static float GetDeltaTime() { return m_deltaTime; }
 
+	// 恢复opengl各类对象的默认绑定
 	static void UnbindVertexBuffer()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

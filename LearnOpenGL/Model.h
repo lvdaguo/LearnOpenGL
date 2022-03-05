@@ -3,10 +3,14 @@
 #include <assimp/scene.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Mesh.h"
 #include "Texture.h"
 
+/// <summary>
+/// 模型（可由多个网格组成）
+/// </summary>
 class Model
 {
 public:
@@ -20,8 +24,13 @@ private:
 	std::vector<class Mesh> m_meshes;
 	std::string m_directory;
 
-	void ProcessNode(aiNode* node, const aiScene* scene);
-	class Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<class Texture> LoadMaterialTextures(aiMaterial* matrial, aiTextureType type, const std::string& name);
+	void TraverseNode(aiNode* node, const aiScene* scene);
+	class Mesh GenerateMesh(aiMesh* mesh, const aiScene* scene);
+
+	std::vector<struct Vertex> GenerateVertexes(aiMesh* mesh) const;
+	std::vector<unsigned int> GenerateIndices(aiMesh* mesh) const;
+	std::vector<std::shared_ptr<class Texture>> GenerateTextures(aiMesh* mesh, const aiScene* scene) const;
+	std::vector<std::shared_ptr<class Texture>> LoadMaterialTextures(
+		aiMaterial* matrial, aiTextureType type, const std::string& name) const;
 };
 

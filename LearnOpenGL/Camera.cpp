@@ -6,9 +6,9 @@
 
 Camera::Camera(const glm::vec3& position, const glm::vec3& up,
 	float moveSpeed, float mouseSensitivity, float fov,
-	float near, float far) :
+	float near, float far, const glm::vec3& front, float yaw, float pitch) :
 	m_position(position), m_up(up),
-	m_front(0.0f, 0.0f, -1.0f), m_yaw(-90.0f), m_pitch(0.0f),
+	m_front(front), m_yaw(yaw), m_pitch(pitch),
 	m_moveSpeed(moveSpeed), m_mouseSensitivity(mouseSensitivity), m_fov(fov),
 	m_near(near), m_far(far)
 {
@@ -17,7 +17,7 @@ Camera::Camera(const glm::vec3& position, const glm::vec3& up,
 	SetInputCallback();
 }
 
-Camera::~Camera() { }
+Camera::~Camera() { RemoveInputCallback(); }
 
 glm::mat4 Camera::GetViewMatrix() const
 {
@@ -38,13 +38,13 @@ void Camera::SetInputCallback()
 {
 	m_mouseOffsetCallback = Action2<float, float>([this](float xOffset, float yOffset)
 		{
-			SetDirection(xOffset, yOffset);
+			OnMouseMove(xOffset, yOffset);
 		});
 	Input::GetInstance().GetMouseOffsetEvent().Add(m_mouseOffsetCallback);
 
 	m_mouseScrollCallback = Action2<float, float>([this](float xOffset, float yOffset)
 		{
-			SetZoom(xOffset, yOffset);
+			OnMouseScroll(xOffset, yOffset);
 		});
 	Input::GetInstance().GetMouseScrollEvent().Add(m_mouseScrollCallback);
 }
@@ -55,19 +55,15 @@ void Camera::RemoveInputCallback()
 	Input::GetInstance().GetMouseScrollEvent().Remove(m_mouseScrollCallback);
 }
 
-#include <iostream>
-
 void Camera::Update()
 {
-	SetMovement(Input::GetInstance());
-	// m_yaw += 1.0f * m_mouseSensitivity * Helper::GetDeltaTime();
-	std::cout << m_yaw << std::endl;
+	UpdateMovement(Input::GetInstance());
 }
 
-void Camera::SetMovement(const Input& input)
+void Camera::UpdateMovement(const Input& input)
 {
 	glm::vec2 dir = glm::vec2(0.0f, 0.0f);
-	if (input.GetKeyDown(Key::A)) dir.x -= 1.0f;
+	if      (input.GetKeyDown(Key::A)) dir.x -= 1.0f;
 	else if (input.GetKeyDown(Key::D)) dir.x += 1.0f;
 	else if (input.GetKeyDown(Key::W)) dir.y += 1.0f;
 	else if (input.GetKeyDown(Key::S)) dir.y -= 1.0f;
@@ -80,7 +76,7 @@ void Camera::SetMovement(const Input& input)
 	m_position += dir.x * m_right * velocity;
 }
 
-void Camera::SetDirection(float xOffset, float yOffset)
+void Camera::OnMouseMove(float xOffset, float yOffset)
 {
 	m_yaw += xOffset * m_mouseSensitivity * Helper::GetDeltaTime();
 	m_pitch += yOffset * m_mouseSensitivity * Helper::GetDeltaTime();
@@ -88,7 +84,7 @@ void Camera::SetDirection(float xOffset, float yOffset)
 	UpdateFacing();
 }
 
-void Camera::SetZoom(float xOffset, float yOffset)
+void Camera::OnMouseScroll(float xOffset, float yOffset)
 {
 	float scrollY = yOffset * Helper::GetDeltaTime();
 	m_fov = glm::clamp(m_fov - scrollY, MinFov, MaxFov);

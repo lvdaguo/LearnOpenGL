@@ -8,16 +8,15 @@
 
 Mesh::Mesh(const std::vector<struct Vertex>& vertices, 
 	const std::vector<unsigned int>& indices,
-	const std::vector<Texture>& textures) :
-	m_vertices(vertices), m_indices(indices), m_textures(textures),
-	m_vertexArray(), m_indexBuffer()
+	const std::vector<std::shared_ptr<class Texture>>& textures) :
+	m_textures(textures), m_vertexArray(), m_indexBuffer()
 {
-	SetupMesh();
+	SetupMesh(vertices, indices);
 }
 
-void Mesh::SetupMesh()
+void Mesh::SetupMesh(const std::vector<struct Vertex>& vertices, const std::vector<unsigned int>& indices)
 {
-	m_vertexBuffer = std::make_unique<VertexBuffer>(&m_vertices[0], sizeof(struct Vertex) * m_vertices.size());
+	m_vertexBuffer = std::make_unique<VertexBuffer>(&vertices[0], sizeof(struct Vertex) * vertices.size());
 	VertexBufferLayout vertexBufferLayout;
 	vertexBufferLayout.Push<float>(3); // vertex.position
 	vertexBufferLayout.Push<float>(3); // vertex.normal
@@ -26,5 +25,7 @@ void Mesh::SetupMesh()
 	m_vertexArray = std::make_unique<VertexArray>();
 	m_vertexArray->AddLayout(*m_vertexBuffer, vertexBufferLayout);
 
-	m_indexBuffer = std::make_unique<IndexBuffer>(&m_indices[0], m_indices.size());
+	m_indexBuffer = std::make_unique<IndexBuffer>(&indices[0], indices.size());
+
+	// vertexces 和 indices 在创建完VertexBuffer和IndexBuffer后即可删除，其数据已经传输到opengl缓冲内
 }

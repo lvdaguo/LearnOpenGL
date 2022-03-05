@@ -23,28 +23,33 @@ void Model::LoadModel(const std::string& path)
         return;
     }
     m_directory = path.substr(0, path.find_last_of('/'));
-    ProcessNode(scene->mRootNode, scene);
+    TraverseNode(scene->mRootNode, scene);
 }
 
-void Model::ProcessNode(aiNode* node, const aiScene* scene)
+void Model::TraverseNode(aiNode* node, const aiScene* scene)
 {
     for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.push_back(ProcessMesh(mesh, scene));
+        m_meshes.push_back(GenerateMesh(mesh, scene));
     }
     for (unsigned int i = 0; i < node->mNumChildren; ++i)
     {
-        ProcessNode(node->mChildren[i], scene);
+        TraverseNode(node->mChildren[i], scene);
     }
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+Mesh Model::GenerateMesh(aiMesh* mesh, const aiScene* scene)
+{
+    std::vector<Vertex> vertexes = GenerateVertexes(mesh);
+    std::vector<unsigned int> indices = GenerateIndices(mesh);
+    std::vector<std::shared_ptr<Texture>> textures = GenerateTextures(mesh, scene);
+    return Mesh(vertexes, indices, textures);
+}
+
+std::vector<struct Vertex> Model::GenerateVertexes(aiMesh* mesh) const
 {
     std::vector<Vertex> vertexes;
-    std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
-
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
     {
         Vertex vertex;
@@ -62,10 +67,19 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             vertex.texCoords.x = mesh->mTextureCoords[0][i].x;
             vertex.texCoords.y = mesh->mTextureCoords[0][i].y;
         }
+        else 
+        {
+            vertex.texCoords = glm::vec2(0.0f);
+        }
 
         vertexes.push_back(vertex);
     }
+    return vertexes;
+}
 
+std::vector<unsigned int> Model::GenerateIndices(aiMesh* mesh) const
+{
+    std::vector<unsigned int> indices;
     for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
     {
         aiFace face = mesh->mFaces[i];
@@ -74,43 +88,48 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             indices.push_back(face.mIndices[j]);
         }
     }
-
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-    std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-    std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-    
-    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-    return Mesh(vertexes, indices, textures);
+    return indices;
 }
 
-std::vector<class Texture> Model::LoadMaterialTextures(aiMaterial* material, aiTextureType type, const std::string& textureType)
+std::vector<std::shared_ptr<class Texture>> Model::GenerateTextures(aiMesh* mesh, const aiScene* scene) const
 {
-    std::vector<Texture> textures;
-    static std::unordered_map<std::string, Texture> loadedTextures;
+    std::vector<std::shared_ptr<Texture>> textures;
+
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    std::vector<std::shared_ptr<Texture>> diffuseMaps = 
+        LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    std::vector<std::shared_ptr<Texture>> specularMaps = 
+        LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+    return textures;
+}
+
+std::vector<std::shared_ptr<class Texture>> Model::LoadMaterialTextures(
+    aiMaterial* material, aiTextureType type, const std::string& textureType) const
+{
+    std::vector<std::shared_ptr<Texture>> textures;
+    static std::unordered_map<std::string, std::shared_ptr<Texture>> loadedTextures;
 
     for (unsigned int i = 0; i < material->GetTextureCount(type); ++i)
     {
         aiString str;
         material->GetTexture(type, i, &str);
         std::string filename(str.C_Str());
-        Texture texture(filename, m_directory, textureType);
-        textures.push_back(texture);
-        /*
-        std::unordered_map<std::string, Texture>::iterator it = loadedTextures.find(filename);
-        if (it != loadedTextures.end())
+
+        // 共享已经加载过的纹理
+        auto it = loadedTextures.find(filename);
+        if (it == loadedTextures.end())
         {
-            Texture texture(filename, m_directory, textureType);
-            textures.push_back(texture);
-            loadedTextures.emplace(filename, texture);
+            std::string filepath = m_directory + '/' + filename;
+            textures.push_back(std::make_shared<Texture>(filepath, textureType));
+            loadedTextures.emplace(filename, textures.back());
         }
         else
         {
-            textures.push_back(it->second);
-            // textures.push_back(loadedTextures[filename]);
+            textures.push_back(loadedTextures[filename]);
         }
-        */
     }
 
     return textures;

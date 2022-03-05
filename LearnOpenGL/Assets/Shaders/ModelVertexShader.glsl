@@ -4,14 +4,12 @@ layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoords;
 
 out vec2 TexCoords;
-out vec3 ourPos;
 
 uniform mat4 model;
-uniform mat4 ViewProjection;
+uniform mat4 view_projection;
 
 void main()
 {
-	gl_Position = ViewProjection * model * vec4(position, 1.0f);
-	// ourPos = vec3(gl_Position);
+	gl_Position = view_projection * model * vec4(position, 1.0f);
 	TexCoords = texCoords;
 }

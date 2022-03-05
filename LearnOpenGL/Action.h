@@ -3,6 +3,11 @@
 #include <functional>
 #include "Helper.h"
 
+// 事件回调函数的模板
+// 支持最多4个输入参数的函数类型（事件的广播不需要返回值）
+// 内部存放一个function和一个id
+// 全局唯一的id被事件用于定位回调函数
+
 class Action
 {
 public:

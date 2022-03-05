@@ -6,8 +6,6 @@ glm::vec2 Input::m_screenCenter = glm::vec2();
 Event2<float, float> Input::m_mouseOffsetEvent = Event2<float, float>();
 Event2<float, float> Input::m_mouseScrollEvent = Event2<float, float>();
 
-Input::Input() { }
-
 void Input::Init()
 {
 	const Window& window = Window::GetInstance();
@@ -21,8 +19,6 @@ void Input::Init()
 	glfwSetCursorPosCallback(GetWindowPointer(), MouseCallback);
 	glfwSetScrollCallback(GetWindowPointer(), ScrollCallback);
 }
-
-Input::~Input() { }
 
 void Input::SetMouseEnabled(bool enabled) const
 {
