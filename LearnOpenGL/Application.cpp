@@ -30,6 +30,10 @@ std::string model_path = "Assets/Models/nanosuit/nanosuit.obj";
 std::string model_vertex_shader = "Assets/Shaders/ModelVertexShader.glsl";
 std::string model_fragment_shader = "Assets/Shaders/ModelFragmentShader.glsl";
 
+std::string normal_vertex_shader = "Assets/Shaders/NormalVertexShader.glsl";
+std::string normal_fragment_shader = "Assets/Shaders/NormalFragmentShader.glsl";
+std::string normal_color_shader = "Assets/Shaders/NormalColorShader.glsl";
+
 glm::vec3 camPos = glm::vec3(0.0f, 0.0, 3.0f);
 glm::vec3 camUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -43,6 +47,83 @@ Window& window = Window::GetInstance();
 Input& input = Input::GetInstance();
 Renderer& renderer = Renderer::GetInstance();
 
+float cubeVertices[] = {
+    // positions          // texture Coords
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
+
+float planeVertices[] = {
+    // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+     5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+    -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+    -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+     5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+    -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+     5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+};
+
+unsigned int cube_indices[] = {
+    0, 1, 2,
+    3, 4, 5,
+    6, 7, 8,
+    9, 10, 11,
+    12, 13, 14,
+    15, 16, 17,
+    18, 19, 20,
+    21, 22, 23,
+    24, 25, 26,
+    27, 28, 29,
+    30, 31, 32,
+    33, 34, 35
+};
+
+unsigned int plane_indices[] = {
+    0, 1, 2,
+    3, 4, 5
+};
+
+
 int main()
 {
 	InitSingleton();
@@ -54,21 +135,61 @@ int main()
 	Shader shader(model_vertex_shader, model_fragment_shader);
 	shader.Use();
 
+    VertexBuffer cubeVBO(cubeVertices, sizeof(cubeVertices)), planeVBO(planeVertices, sizeof(planeVertices));
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
+    layout.Push<float>(2);
+
+    VertexArray cubeVAO, planeVAO;
+    cubeVAO.AddLayout(cubeVBO, layout);
+    planeVAO.AddLayout(planeVBO, layout);
+
+    IndexBuffer cubeIBO(cube_indices, 36), planeIBO(plane_indices, 6);
+
+    Texture cubeTexture("Assets/Textures/container.jpg"), planeTexture("Assets/Textures/container2.png");
+
+    Shader normalShader(normal_vertex_shader, normal_fragment_shader);
+
+    Shader outlineShader(normal_vertex_shader, normal_color_shader);
+    outlineShader.Use();
+    outlineShader.SetVector3("color", glm::vec3(0.3f, 0.4f, 0.5f));
+
+    //glDepthFunc(GL_ALWAYS);
+
 	renderer.SetUpdateCallback([&]()
 	{
 		cam.Update();
 		ProcessInput();
 
 		renderer.Clear();
+        
+        normalShader.Use();
+
+        // normalShader.SetInt("texture1", 0);
+        cubeTexture.Bind();
 
 		glm::mat4 view_projection = cam.GetViewProjectionMatrix();
-		shader.SetMatrix4("view_projection", view_projection);
+        normalShader.SetMatrix4("view_projection", view_projection);
+
 		glm::mat4 mod = glm::mat4(1.0f);
-		mod = glm::translate(mod, glm::vec3(0.0f, 0.0f, 0.0f));
-		mod = glm::scale(mod, glm::vec3(1.0f));
-		shader.SetMatrix4("model", mod);
+		mod = glm::translate(mod, glm::vec3(-1.0f, 0.0f, -1.0f));
+        normalShader.SetMatrix4("model", mod);
+        renderer.Draw(cubeVAO, cubeIBO, normalShader);
+
+        mod = glm::mat4(1.0f);
+        mod = glm::translate(mod, glm::vec3(2.0f, 0.0f, 0.0f));
+        normalShader.SetMatrix4("model", mod);
+        renderer.Draw(cubeVAO, cubeIBO, normalShader);
+
+        planeTexture.Bind();
+        // normalShader.SetInt("texture1", 1);
+        normalShader.SetMatrix4("model", glm::mat4(1.0f));
+        renderer.Draw(planeVAO, planeIBO, normalShader);
+
+        //shader.SetMatrix4("view_projection", view_projection);
+		//shader.SetMatrix4("model", mod);
 		//renderer.Draw(vao, ibo, shader);
-		renderer.Draw(model, shader);
+		//renderer.Draw(model, shader);
 	});
 
 	renderer.Run();

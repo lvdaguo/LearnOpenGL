@@ -185,8 +185,10 @@
     <None Include="Assets\Shaders\LightShader.glsl" />
     <None Include="Assets\Shaders\ModelFragmentShader.glsl" />
     <None Include="Assets\Shaders\ModelVertexShader.glsl" />
+    <None Include="Assets\Shaders\NormalColorShader.glsl" />
+    <None Include="Assets\Shaders\NormalFragmentShader.glsl" />
+    <None Include="Assets\Shaders\NormalVertexShader.glsl" />
     <None Include="Assets\Shaders\VertexShader.glsl" />
-    <None Include="assimp-vc130-mtd.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\awesomeface.png" />
