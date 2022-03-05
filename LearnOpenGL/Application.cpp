@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include <map>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -94,13 +95,13 @@ float cubeVertices[] = {
 
 float planeVertices[] = {
     // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-     5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+     5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
     -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-    -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+    -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
 
-     5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-    -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-     5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+     5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
+    -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
+     5.0f, -0.5f, -5.0f,  1.0f, 1.0f
 };
 
 unsigned int cube_indices[] = {
@@ -123,10 +124,32 @@ unsigned int plane_indices[] = {
     3, 4, 5
 };
 
+float transparentVertices[] = {
+    // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+    0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
+    0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
+    1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
+
+    0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
+    1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
+    1.0f,  0.5f,  0.0f,  1.0f,  1.0f
+};
+
+unsigned int transparent_indices[] = {
+    0, 1, 2,
+    3, 4, 5
+};
 
 int main()
 {
 	InitSingleton();
+
+    std::vector<glm::vec3> vegetation;
+    vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+    vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+    vegetation.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+    vegetation.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+    vegetation.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
 
 	renderer.SetClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 	Camera cam(camPos, camUp);
@@ -136,49 +159,36 @@ int main()
 	shader.Use();
 
     VertexBuffer cubeVBO(cubeVertices, sizeof(cubeVertices)), planeVBO(planeVertices, sizeof(planeVertices));
+    VertexBuffer transparentVBO(transparentVertices, sizeof(transparentVertices));
     VertexBufferLayout layout;
     layout.Push<float>(3);
     layout.Push<float>(2);
 
-    VertexArray cubeVAO, planeVAO;
+    VertexArray cubeVAO, planeVAO, transparentVAO;
     cubeVAO.AddLayout(cubeVBO, layout);
     planeVAO.AddLayout(planeVBO, layout);
+    transparentVAO.AddLayout(transparentVBO, layout);
 
-    IndexBuffer cubeIBO(cube_indices, 36), planeIBO(plane_indices, 6);
+    IndexBuffer cubeIBO(cube_indices, 36), planeIBO(plane_indices, 6), transparentIBO(transparent_indices, 6);
 
     Texture cubeTexture("Assets/Textures/container.jpg"), planeTexture("Assets/Textures/container2.png");
+    Texture transparentTexture("Assets/Textures/window.png");
 
     Shader normalShader(normal_vertex_shader, normal_fragment_shader);
 
-    Shader outlineShader(normal_vertex_shader, normal_color_shader);
-    outlineShader.Use();
-    outlineShader.SetVector3("color", glm::vec3(0.3f, 0.4f, 0.5f));
-
-    //glDepthFunc(GL_ALWAYS);
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     renderer.SetUpdateCallback([&]()
 	{
 		cam.Update();
 		ProcessInput();
-        // renderer.Clear();
-        
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-        glStencilMask(0x00);
+        renderer.Clear();
 
         // draw floor
         planeTexture.Bind();
         normalShader.SetMatrix4("model", glm::mat4(1.0f));
         renderer.Draw(planeVAO, planeIBO, normalShader);
-
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilMask(0xFF);
 
         // draw two containers
         cubeTexture.Bind();
@@ -197,33 +207,21 @@ int main()
         normalShader.SetMatrix4("model", mod);
         renderer.Draw(cubeVAO, cubeIBO, normalShader);
 
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00);
-        glDisable(GL_DEPTH_TEST);
+        std::map<float, glm::vec3> sorted;
+        for (unsigned int i = 0; i < vegetation.size(); i++)
+        {
+            float distance = glm::length(cam.GetPosition() - vegetation[i]);
+            sorted[distance] = vegetation[i];
+        }
 
-        outlineShader.Use();
-        outlineShader.SetMatrix4("view_projection", view_projection);
-
-        mod = glm::mat4(1.0f);
-        mod = glm::translate(mod, glm::vec3(-1.0f, 0.0f, -1.0f));
-        mod = glm::scale(mod, glm::vec3(1.1f));
-        outlineShader.SetMatrix4("model", mod);
-        renderer.Draw(cubeVAO, cubeIBO, outlineShader);
-
-        mod = glm::mat4(1.0f);
-        mod = glm::translate(mod, glm::vec3(2.0f, 0.0f, 0.0f));
-        mod = glm::scale(mod, glm::vec3(1.1f));
-        outlineShader.SetMatrix4("model", mod);
-        renderer.Draw(cubeVAO, cubeIBO, outlineShader);
-
-        glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glEnable(GL_DEPTH_TEST);
-
-        //shader.SetMatrix4("view_projection", view_projection);
-		//shader.SetMatrix4("model", mod);
-		//renderer.Draw(vao, ibo, shader);
-		//renderer.Draw(model, shader);
+        transparentTexture.Bind();
+        for (auto it = sorted.rbegin(); it != sorted.rend(); ++it) 
+        {
+            mod = glm::mat4(1.0f);
+            mod = glm::translate(mod, it->second);
+            normalShader.SetMatrix4("model", mod);
+            renderer.Draw(transparentVAO, transparentIBO, normalShader);
+        }
 	});
 
 	renderer.Run();
