@@ -8,6 +8,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "stb_image.h"
 
@@ -198,6 +199,17 @@ int main()
     Texture cubeTexture("Assets/Textures/container.jpg");
     Shader normalShader(reflect_vertex_shader, reflect_fragment_shader);
 
+    unsigned int uniformBlockIndex = glGetUniformBlockIndex(normalShader.GetID(), "Matrices");
+    glUniformBlockBinding(normalShader.GetID(), uniformBlockIndex, 0);
+
+    unsigned int uboMatrices;
+    glGenBuffers(1, &uboMatrices);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
     // jpg Í¼Æ¬²»ÓÃ·­×ªy
     stbi_set_flip_vertically_on_load(false);
     std::vector<std::string> faces
@@ -228,20 +240,22 @@ int main()
 		ProcessInput();
         renderer.Clear();
 
-        glm::mat4 view_projection = cam.GetViewProjectionMatrix();
-        
+        glm::mat4 projection = cam.GetProjectionMatrix();
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.GetViewMatrix()));
+
         // draw container
         cubeTexture.Bind();
         normalShader.Use();
-        normalShader.SetMatrix4("view_projection", view_projection);
 		glm::mat4 mod = glm::mat4(1.0f);
 		mod = glm::translate(mod, glm::vec3(0.0f));
         normalShader.SetMatrix4("model", mod);
         normalShader.SetVector3("cameraPos", cam.GetPosition());
         renderer.Draw(cubeVAO, cubeIBO, normalShader);
 
-        glm::mat4 view = glm::mat4(glm::mat3(cam.GetViewMatrix()));
         skyboxShader.Use();
+        glm::mat4 view = glm::mat4(glm::mat3(cam.GetViewMatrix()));
         skyboxShader.SetMatrix4("view", view);
         skyboxShader.SetMatrix4("projection", cam.GetProjectionMatrix());
         glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxID);

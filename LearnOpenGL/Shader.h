@@ -41,5 +41,8 @@ public:
 private:
 	unsigned int m_shaderProgramID;
 	std::unordered_map<std::string, int> m_locationMap;
+
+public:
+	unsigned int GetID() const { return m_shaderProgramID; }
 };
 
