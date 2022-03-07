@@ -10,7 +10,8 @@
 class Shader
 {
 public:
-	Shader(const std::string& vertexShaderPath, const std::string fragmentShaderPath);
+	Shader(const std::string& vertexShaderPath, const std::string fragmentShaderPath, 
+		const std::string& geometryShaderPath = "");
 	Shader(const class Shader& other) = delete;
 	class Shader& operator = (const class Shader& other) = delete;
 	~Shader();
@@ -19,7 +20,8 @@ private:
 	std::string ReadShaderFromFile(const std::string& filePath);
 	unsigned int CreateShader(const std::string& shaderSource, GLuint ShaderType);
 	void CheckShader(unsigned int shaderID);
-	unsigned int CreateShaderProgram(unsigned int vertexShaderID, unsigned int fragmentShaderID);
+	unsigned int CreateShaderProgram(unsigned int vertexShaderID, unsigned int fragmentShaderID, 
+		unsigned int geometryShaderID);
 	void CheckShaderProgram(unsigned int shaderProgramID);
 
 public:

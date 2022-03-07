@@ -5,18 +5,21 @@
 #include <iostream>
 #include "Shader.h"
 
-Shader::Shader(const std::string& vertexShaderPath, const std::string fragmentShaderPath)
+Shader::Shader(const std::string& vertexShaderPath, const std::string fragmentShaderPath, 
+	const std::string& geometryShaderPath)
 {
 	auto CreateShaderFromPath = [this](const std::string& filePath, GLuint shaderType)
 	{
+		if (filePath == "") return static_cast<unsigned int>(0);
 		std::string shaderSource = ReadShaderFromFile(filePath);
 		return CreateShader(shaderSource, shaderType);
 	};
 
 	unsigned int vertexShaderID = CreateShaderFromPath(vertexShaderPath, GL_VERTEX_SHADER);
 	unsigned int fragmentShaderID = CreateShaderFromPath(fragmentShaderPath, GL_FRAGMENT_SHADER);
+	unsigned int geometryShaderID = CreateShaderFromPath(geometryShaderPath, GL_GEOMETRY_SHADER);
 
-	m_shaderProgramID = CreateShaderProgram(vertexShaderID, fragmentShaderID);
+	m_shaderProgramID = CreateShaderProgram(vertexShaderID, fragmentShaderID, geometryShaderID);
 }
 
 Shader::~Shader()
@@ -73,13 +76,15 @@ void Shader::CheckShader(unsigned int shaderID)
 	}
 };
 
-unsigned int Shader::CreateShaderProgram(unsigned int vertexShaderID, unsigned int fragmentShaderID)
+unsigned int Shader::CreateShaderProgram(unsigned int vertexShaderID, unsigned int fragmentShaderID, 
+	unsigned int geometryShaderID)
 {
 	unsigned int shaderProgramID;
 	shaderProgramID = glCreateProgram();
 
 	glAttachShader(shaderProgramID, vertexShaderID);
 	glAttachShader(shaderProgramID, fragmentShaderID);
+	if (geometryShaderID != 0) glAttachShader(shaderProgramID, geometryShaderID);
 
 	glLinkProgram(shaderProgramID);
 
@@ -88,6 +93,7 @@ unsigned int Shader::CreateShaderProgram(unsigned int vertexShaderID, unsigned i
 	// 链接完成后，可释放单独shader的资源
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
+	if (geometryShaderID != 0) glDeleteShader(geometryShaderID);
 
 	return shaderProgramID;
 }

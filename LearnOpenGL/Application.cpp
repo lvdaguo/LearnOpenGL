@@ -34,16 +34,9 @@ const std::string model_path = "Assets/Models/nanosuit/nanosuit.obj";
 const std::string model_vertex_shader = "Assets/Shaders/ModelVertexShader.glsl";
 const std::string model_fragment_shader = "Assets/Shaders/ModelFragmentShader.glsl";
 
-const std::string normal_vertex_shader = "Assets/Shaders/NormalVertexShader.glsl";
-const std::string normal_fragment_shader = "Assets/Shaders/NormalFragmentShader.glsl";
-const std::string normal_color_shader = "Assets/Shaders/NormalColorShader.glsl";
-const std::string postprocess_shader = "Assets/Shaders/PostprocessShader.glsl";
-
-const std::string& skybox_vertex_shader = "Assets/Shaders/SkyboxVertexShader.glsl";
-const std::string& skybox_fragment_shader = "Assets/Shaders/SkyboxFragmentShader.glsl";
-
-const std::string& reflect_vertex_shader = "Assets/Shaders/ReflectVertexShader.glsl";
-const std::string& reflect_fragment_shader = "Assets/Shaders/ReflectFragmentShader.glsl";
+const std::string& flat_vertex_shader = "Assets/Shaders/FlatVertexShader.glsl";
+const std::string& flat_fragment_shader = "Assets/Shaders/FlatFragmentShader.glsl";
+const std::string& geometry_shader =      "Assets/Shaders/GeometryShader.glsl";
 
 glm::vec3 camPos = glm::vec3(0.0f, 0.0, 3.0f);
 glm::vec3 camUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -60,125 +53,6 @@ Window& window = Window::GetInstance();
 Input& input = Input::GetInstance();
 Renderer& renderer = Renderer::GetInstance();
 
-float cubeVertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-};
-
-unsigned int cube_indices[] = {
-    0, 1, 2,
-    3, 4, 5,
-    6, 7, 8,
-    9, 10, 11,
-    12, 13, 14,
-    15, 16, 17,
-    18, 19, 20,
-    21, 22, 23,
-    24, 25, 26,
-    27, 28, 29,
-    30, 31, 32,
-    33, 34, 35
-};
-
-float skyboxVertices[] = {
-    // positions          
-            -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        -1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f
-};
-
-unsigned int skybox_indices[] = {
-    0, 1, 2,
-    3, 4, 5,
-    6, 7, 8,
-    9, 10, 11,
-    12, 13, 14,
-    15, 16, 17,
-    18, 19, 20,
-    21, 22, 23,
-    24, 25, 26,
-    27, 28, 29,
-    30, 31, 32,
-    33, 34, 35
-};
-
 int main()
 {
 	InitSingleton();
@@ -186,53 +60,8 @@ int main()
 	renderer.SetClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 	Camera cam(camPos, camUp);
 
-    VertexBuffer cubeVBO(cubeVertices, sizeof(cubeVertices));
-    VertexBufferLayout layout;
-    layout.Push<float>(3);
-    layout.Push<float>(3);
-
-    VertexArray cubeVAO;
-    cubeVAO.AddLayout(cubeVBO, layout);
-
-    IndexBuffer cubeIBO(cube_indices, 36);
-
-    Texture cubeTexture("Assets/Textures/container.jpg");
-    Shader normalShader(reflect_vertex_shader, reflect_fragment_shader);
-
-    unsigned int uniformBlockIndex = glGetUniformBlockIndex(normalShader.GetID(), "Matrices");
-    glUniformBlockBinding(normalShader.GetID(), uniformBlockIndex, 0);
-
-    unsigned int uboMatrices;
-    glGenBuffers(1, &uboMatrices);
-
-    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
-
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
-
-    // jpg Í¼Æ¬²»ÓÃ·­×ªy
-    stbi_set_flip_vertically_on_load(false);
-    std::vector<std::string> faces
-    {
-        "Assets/Textures/right.jpg",
-        "Assets/Textures/left.jpg",
-        "Assets/Textures/top.jpg",
-        "Assets/Textures/bottom.jpg",
-        "Assets/Textures/front.jpg",
-        "Assets/Textures/back.jpg"
-    };
-    unsigned int skyboxID = loadCubemap(faces);
-
-    VertexBuffer skyboxVBO(skyboxVertices, sizeof(skyboxVertices));
-    VertexBufferLayout skyboxLayout;
-    skyboxLayout.Push<float>(3);
-    VertexArray skyboxVAO;
-    skyboxVAO.AddLayout(skyboxVBO, skyboxLayout);
-    IndexBuffer skyboxIBO(skybox_indices, 36);
-
-    Shader skyboxShader(skybox_vertex_shader, skybox_fragment_shader);
-
-    glDepthFunc(GL_LEQUAL);
+    Model nano(model_path);
+    Shader shader(flat_vertex_shader, flat_fragment_shader, geometry_shader);
 
     renderer.SetUpdateCallback([&]()
 	{
@@ -240,30 +69,15 @@ int main()
 		ProcessInput();
         renderer.Clear();
 
-        glm::mat4 projection = cam.GetProjectionMatrix();
-        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
-        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.GetViewMatrix()));
-
-        // draw container
-        cubeTexture.Bind();
-        normalShader.Use();
-		glm::mat4 mod = glm::mat4(1.0f);
-		mod = glm::translate(mod, glm::vec3(0.0f));
-        normalShader.SetMatrix4("model", mod);
-        normalShader.SetVector3("cameraPos", cam.GetPosition());
-        renderer.Draw(cubeVAO, cubeIBO, normalShader);
-
-        skyboxShader.Use();
-        glm::mat4 view = glm::mat4(glm::mat3(cam.GetViewMatrix()));
-        skyboxShader.SetMatrix4("view", view);
-        skyboxShader.SetMatrix4("projection", cam.GetProjectionMatrix());
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxID);
-        renderer.Draw(skyboxVAO, skyboxIBO, skyboxShader);
+        shader.Use();
+        shader.SetMatrix4("model", glm::mat4(1.0f));
+        shader.SetMatrix4("view", cam.GetViewMatrix());
+        shader.SetMatrix4("projection", cam.GetProjectionMatrix());
+        shader.SetFloat("time", Helper::GetRealTime());
+        renderer.Draw(nano, shader);
 	});
 
 	renderer.Run();
-
 	return 0;
 }
 

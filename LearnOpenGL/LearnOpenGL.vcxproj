@@ -181,7 +181,10 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Shaders\FlatFragmentShader.glsl" />
+    <None Include="Assets\Shaders\FlatVertexShader.glsl" />
     <None Include="Assets\Shaders\FragmentShader.glsl" />
+    <None Include="Assets\Shaders\GeometryShader.glsl" />
     <None Include="Assets\Shaders\LightShader.glsl" />
     <None Include="Assets\Shaders\ModelFragmentShader.glsl" />
     <None Include="Assets\Shaders\ModelVertexShader.glsl" />
